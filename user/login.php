@@ -81,7 +81,7 @@ if (isset($_POST['login'])) {
       </a>
 
       <div class="d-flex justify-content-between mx-1">
-        <a href="forget-password.php" class="d-block text-center mt-2 small">Forgot password?</a>
+        <a href="forgot-password.php" class="d-block text-center mt-2 small">Forgot password?</a>
         <a href="../admin/login.php" class="d-block text-center mt-2 small">Admin?</a>
       </div>
       <!-- end other options -->

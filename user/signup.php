@@ -85,7 +85,7 @@ if (isset($_POST['submit'])) {
 
       <!-- contact no. -->
       <div class="input-group mb-3">
-        <input type="tel" name="contactno" id="contactno" class="form-control" placeholder="Contact number" aria-label="Contact number" required />
+        <input type="tel" name="contactno" id="contactno" class="form-control" placeholder="Contact number" aria-label="Contact number" maxlength="10" required />
       </div>
 
       <!-- email -->

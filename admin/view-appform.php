@@ -11,7 +11,7 @@ if (strlen($_SESSION['aid'] == 0)) {
     $admrmk = $_POST['AdminRemark'];
     $admsta = $_POST['status'];
     $toemail = $_POST['useremail'];
-    $query = mysqli_query($con, "update  tbladmapplications set AdminRemark='$admrmk',AdminStatus='$admsta' where ID='$cid'");
+    $query = mysqli_query($con, "update tbladmapplications set AdminRemark='$admrmk',AdminStatus='$admsta' where ID='$cid'");
     if ($query) {
       $subj = "Admission Application Status";
       $heade .= "MIME-Version: 1.0" . "\r\n";
@@ -19,13 +19,13 @@ if (strlen($_SESSION['aid'] == 0)) {
       $heade .= 'From:CAMS<noreply@yourdomain.com>' . "\r\n";    // Put your sender email here
       $msgec .= "<html></body><div><div>Hello,</div></br></br>";
       $msgec .= "<div style='padding-top:8px;'>Your Admission application has been $admsta ) </br>
-<strong>Admin Remark: </strong> $admrmk </div><div></div></body></html>";
+    <strong>Admin Remark: </strong> $admrmk </div><div></div></body></html>";
       mail($toemail, $subj, $msgec, $heade);
       echo "<script>alert('Admin Remark and Status has been updated.');</script>";
-      echo "<script>window.location.href ='pending-application.php'</script>";
+      echo "<script>window.location.href ='dashboard.php'</script>";
     } else {
       echo "<script>alert('Something Went Wrong. Please try again.');</script>";
-      echo "<script>window.location.href ='pending-application.php'</script>";
+      echo "<script>window.location.href ='dashboard.php'</script>";
     }
   }
 ?>
@@ -127,7 +127,7 @@ if (strlen($_SESSION['aid'] == 0)) {
                     <td><?php echo $row['MotherName']; ?></td>
                   </tr>
                   <tr>
-                    <th>DOB</th>
+                    <th>Date of Birth</th>
                     <td><?php echo $row['DOB']; ?></td>
                   </tr>
                   <tr>
@@ -186,24 +186,31 @@ if (strlen($_SESSION['aid'] == 0)) {
 
                 <table class="table mb-0">
 
-                  <?php if ($row['AdminRemark'] == "") { ?>
-
+                  <?php if ($row['AdminStatus'] == "" || $row['AdminStatus'] == "3") { ?>
 
                     <form name="submit" method="post" enctype="multipart/form-data">
                       <input type="hidden" name="useremail" value="<?php echo $row['Email']; ?>">
                       <tr>
-                        <th>Admin Remark :</th>
+                        <th>Admin Remark:</th>
                         <td>
-                          <textarea name="AdminRemark" placeholder="" rows="12" cols="14" class="form-control wd-450" required="true"></textarea>
+                          <?php
+                          if ($row['AdminStatus'] == "3") {
+                            $val = $row['AdminRemark'];
+                          } else {
+                            $val = "";
+                          }
+                          ?>
+                          <textarea name="AdminRemark" rows="12" cols="14" class="form-control wd-450" required="true"><?php echo $val; ?></textarea>
                         </td>
                       </tr>
 
                       <tr>
-                        <th>Admin Status :</th>
+                        <th>Admin Status:</th>
                         <td>
-                          <select name="status" class="form-control wd-450" required="true">
+                          <select name=" status" class="form-control wd-450" required="true">
                             <option value="1" selected="true">Selected</option>
                             <option value="2">Rejected</option>
+                            <option value="3">On hold</option>
                           </select>
                         </td>
                       </tr>
@@ -233,6 +240,10 @@ if (strlen($_SESSION['aid'] == 0)) {
 
                           if ($row['AdminStatus'] == "2") {
                             echo "Rejected";
+                          }
+
+                          if ($row['AdminStatus'] == "3") {
+                            echo "On hold";
                           }; ?></td>
                     </tr>
 

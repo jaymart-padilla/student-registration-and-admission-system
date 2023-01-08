@@ -109,7 +109,17 @@ if (strlen($_SESSION['uid'] == 0)) {
               if ($rw > 0) {
                 while ($row = mysqli_fetch_array($query)) {
               ?>
-                  <p style="font-size:16px; color:red" align="center">Your Admission Form has already been submitted.</p>
+                  <?php
+                  if ($row['AdminStatus'] == "3") {
+                    echo '<p style="color:orange" align="center">Your Application has been put on hold.</p>';
+                  } elseif ($row['AdminStatus'] == "1") {
+                    echo '<p style="color:green" align="center">Your Application has been accepted!.</p>';
+                  } elseif ($row['AdminStatus'] == "2") {
+                    echo '<p style="color:red" align="center">Your Application has been rejected.</p>';
+                  } else {
+                    echo '<p style="color:blue" align="center">Your Admission Form has already been submitted.</p>';
+                  }
+                  ?>
                   <table class="table mb-0">
                     <tr>
                       <th>Course Applied</th>
@@ -128,7 +138,7 @@ if (strlen($_SESSION['uid'] == 0)) {
                       <td><?php echo $row['MotherName']; ?></td>
                     </tr>
                     <tr>
-                      <th>DOB</th>
+                      <th>Date of Birth</th>
                       <td><?php echo $row['DOB']; ?></td>
                     </tr>
                     <tr>
@@ -197,6 +207,10 @@ if (strlen($_SESSION['uid'] == 0)) {
                           if ($row['AdminStatus'] == "2") {
                             echo "Rejected";
                           }
+
+                          if ($row['AdminStatus'] == "3") {
+                            echo "On hold";
+                          }
                           ?></td>
                     </tr>
                     <tr>
@@ -207,7 +221,7 @@ if (strlen($_SESSION['uid'] == 0)) {
                   <br>
                   <?php
 
-                  if ($row['AdminStatus'] == "") {
+                  if ($row['AdminStatus'] == "" || $row['AdminStatus'] == "3") {
                   ?>
                     <p style="text-align: center;font-size: 20px;"><a href="edit-appform.php?editid=<?php echo $row['ID']; ?>">Edit Details</a></p>
                 <?php }
@@ -273,10 +287,10 @@ if (strlen($_SESSION['uid'] == 0)) {
                               <div class="row">
                                 <div class="col-xl-4 col-lg-12">
                                   <fieldset>
-                                    <h5>DOB </h5>
+                                    <h5>Date of Birth</h5>
                                     <div class="form-group">
                                       <input class="form-control white_bg" id="dob" name="dob" type="date" required>
-                                      <small class="text-muted">DOB Must be in this format (MM-DD-YYYY)</small>
+                                      <small class="text-muted">Must be in this format (MM-DD-YYYY)</small>
                                     </div>
 
                                   </fieldset>

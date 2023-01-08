@@ -75,7 +75,7 @@ if (isset($_POST['login'])) {
 
       <!-- other options -->
       <div class="d-flex justify-content-between px-1">
-        <a href="forget-password.php" class="text-center mt-2 d-block small">Forgot password?</a>
+        <a href="forgot-password.php" class="text-center mt-2 d-block small">Forgot password?</a>
         <a href="../user/signup.php" class="text-center mt-2 d-block small">Register as a user</a>
       </div>
       <!-- end other options -->

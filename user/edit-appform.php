@@ -151,10 +151,10 @@ if (strlen($_SESSION['uid'] == 0)) {
                               <div class="row">
                                 <div class="col-xl-4 col-lg-12">
                                   <fieldset>
-                                    <h5>DOB </h5>
+                                    <h5>Date of Birth</h5>
                                     <div class="form-group">
                                       <input class="form-control white_bg" id="dob" name="dob" type="date" required='true' value="<?php echo $row['DOB']; ?>">
-                                      <small class="text-muted">DOB Must be in this format (MM-DD-YYYY)</small>
+                                      <small class="text-muted">Must be in this format (MM-DD-YYYY)</small>
                                     </div>
 
                                   </fieldset>

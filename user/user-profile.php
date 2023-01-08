@@ -10,10 +10,7 @@ if (strlen($_SESSION['uid'] == 0)) {
     $fname = $_POST['firstname'];
     $lname = $_POST['lastname'];
 
-
-
     $query = mysqli_query($con, "update tbluser set FirstName='$fname', LastName='$lname' where ID='$sid'");
-
 
     if ($query) {
 
@@ -22,7 +19,6 @@ if (strlen($_SESSION['uid'] == 0)) {
       echo '<script>alert("Something Went Wrong. Please try again.")</script>';
     }
   }
-
 ?>
 
   <!DOCTYPE html>

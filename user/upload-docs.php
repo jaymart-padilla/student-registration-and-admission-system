@@ -52,7 +52,7 @@ if (strlen($_SESSION['uid'] == 0)) {
       if ($query) {
 
         echo '<script>alert("Data has been added successfully.")</script>';
-        echo "<script>window.location.href ='upload-doc.php'</script>";
+        echo "<script>window.location.href ='upload-docs.php'</script>";
       } else {
         echo '<script>alert("Something Went Wrong. Please try again.")</script>';
       }

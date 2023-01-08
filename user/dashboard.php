@@ -72,6 +72,7 @@ if (strlen($_SESSION['uid']) == 0) {
               $rtp = mysqli_query($con, "SELECT AdminStatus from tbladmapplications where UserID='$uid'");
               $row = mysqli_fetch_array($rtp);
               $adsts = $row['AdminStatus'];
+
               if ($row > 0) { ?>
                 <a href="admission-form.php" class="d-block col-lg-4 col-md-6 mb-4 dashboard-item" style="text-decoration: none;">
                   <div class="card border-left-primary shadow h-100 py-2">
@@ -83,10 +84,13 @@ if (strlen($_SESSION['uid']) == 0) {
                           </div>
                           <div class="h5 mb-0 font-weight-bold text-gray-800">
                             <?php if ($adsts == 1) { ?>
-                              "Your Application has been selected"
+                              Your Application has been selected
                             <?php } ?>
                             <?php if ($adsts == 2) { ?>
                               Your Application has been rejected
+                            <?php } ?>
+                            <?php if ($adsts == 3) { ?>
+                              Your Application has been put on hold
                             <?php } ?>
                             <?php if ($adsts == "") { ?>
                               Your Application has been pending with admin for review
@@ -129,65 +133,6 @@ if (strlen($_SESSION['uid']) == 0) {
                   </div>
                 </a>
               <?php } ?>
-
-              <!-- if there's application | otherwise inform user he don't have an application yet -->
-              <?php
-              $rtp = mysqli_query($con, "SELECT ID from tbladmapplications where UserID='$uid'");
-              $row = mysqli_fetch_array($rtp);
-              if ($row > 0) {
-                $ret = mysqli_query($con, "select AdminStatus from  tbladmapplications join tbldocument on tbldocument.UserID=tbladmapplications.UserID where tbldocument.UserID='$stuid' and  tbladmapplications.AdminStatus='1'");
-                $num = mysqli_fetch_array($ret);
-                if ($num > 0) { ?>
-                  <a href="admission-form.php" class="d-block col-lg-4 col-md-6 mb-4 dashboard-item" style="text-decoration: none;">
-                    <div class="card border-left-success shadow h-100 py-2">
-                      <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                          <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                              Notice
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                              <p>Your application has been selected!</p>
-                              <p>Your documents are also uploaded.</p>
-                            </div>
-                          </div>
-                          <div class="col-auto align-self-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-clipboard-data-fill" viewBox="0 0 16 16">
-                              <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z" />
-                              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1ZM10 8a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V8Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1Z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                <?php } else { ?>
-                  <a href="upload-docs.php" class="d-block col-lg-4 col-md-6 mb-4 dashboard-item" style="text-decoration: none;">
-                    <div class="card border-left-success shadow h-100 py-2">
-                      <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                          <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                              Notice
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                              <p>Your Application has been selected.</p>
-                              <p>Please Upload your documents.</p>
-                            </div>
-                          </div>
-                          <div class="col-auto align-self-start">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-clipboard-data-fill" viewBox="0 0 16 16">
-                              <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z" />
-                              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1ZM10 8a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0V8Zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0v-1Zm4-3a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1Z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-              <?php }
-              }
-              ?>
 
             </div>
           </div>

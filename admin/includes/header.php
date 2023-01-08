@@ -8,8 +8,8 @@
   <ul class="navbar-nav ml-auto">
     <!-- Nav Item - Alerts -->
     <!-- getting various info to list in the notification, if there is -->
-    <?php $qury = mysqli_query($con, "SELECT  tbladmapplications.ID as appid,tbluser.FirstName, tbluser.LastName,tbladmapplications.CourseApplieddate from tbladmapplications join tbluser on tbluser.ID=tbladmapplications.UserId where tbladmapplications.AdminStatus is null");
-    $num = mysqli_num_rows($qury);
+    <?php $query = mysqli_query($con, "SELECT  tbladmapplications.ID as appid,tbluser.FirstName, tbluser.LastName,tbladmapplications.CourseApplieddate from tbladmapplications join tbluser on tbluser.ID=tbladmapplications.UserId where tbladmapplications.AdminStatus is null");
+    $num = mysqli_num_rows($query);
     ?>
     <li class="nav-item dropdown no-arrow mx-1">
       <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -30,7 +30,7 @@
         <h6 class="dropdown-header">Notifications</h6>
         <?php
         if ($num > 0) {
-          while ($row = mysqli_fetch_array($qury)) {
+          while ($row = mysqli_fetch_array($query)) {
         ?>
             <a class="dropdown-item d-flex align-items-center" href="view-appform.php?aticid=<?php echo $row['appid']; ?>">
               <div class="mr-3">

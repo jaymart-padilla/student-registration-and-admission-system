@@ -68,7 +68,7 @@ VALUES (
     'Admin',
     'admin',
     1234567890,
-    'admin@gmail.com',
+    'jrpadilla_20ac0174@psu.edu.ph',
     '482c811da5d5b4bc6d497ffa98491e38',
     '2022-12-29 17:00:00'
   );

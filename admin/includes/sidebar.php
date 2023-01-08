@@ -50,6 +50,7 @@
         <a class="collapse-item" href="selected-applications.php">Selected</a>
         <a class="collapse-item" href="pending-applications.php">Pending</a>
         <a class="collapse-item" href="rejected-applications.php">Rejected</a>
+        <a class="collapse-item" href="onhold-applications.php">On hold</a>
         <div class="collapse-divider"></div>
         <h6 class="collapse-header">See all:</h6>
         <a class="collapse-item" href="all-applications.php">All applications</a>
