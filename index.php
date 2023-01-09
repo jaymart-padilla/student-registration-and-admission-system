@@ -44,8 +44,8 @@ else {
     <!-- ======= Header ======= -->
     <header id="header" class="fixed-top">
       <div class="container d-flex align-items-center">
-        <a href="/"><img src="assets/img/Pangasinan_State_University_logo.png" alt="psu icon" width="40" class="me-2" /></a>
-        <h1 class="logo me-auto"><a href="/">PSU-ACC</a></h1>
+        <a href="http://localhost/projects/mycollege/"><img src="assets/img/Pangasinan_State_University_logo.png" alt="psu icon" width="40" class="me-2" /></a>
+        <h1 class="logo me-auto"><a href="http://localhost/projects/mycollege/">PSU-ACC</a></h1>
 
         <nav id="navbar" class="navbar">
           <ul>
@@ -131,10 +131,10 @@ else {
             <div class="col-lg-6">
               <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="100">
                 <div class="pic">
-                  <img src="assets/img/team/team-1.jpg" class="img-fluid" alt="" />
+                  <img src="assets/img/team/jaymart.jpg" class="img-fluid" alt="" />
                 </div>
                 <div class="member-info">
-                  <h4>Walter White</h4>
+                  <h4>Jaymart Padilla</h4>
                   <span>Chief Executive Officer</span>
                   <p>
                     Explicabo voluptatem mollitia et repellat qui dolorum quasi
@@ -152,10 +152,10 @@ else {
             <div class="col-lg-6 mt-4 mt-lg-0">
               <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="200">
                 <div class="pic">
-                  <img src="assets/img/team/team-2.jpg" class="img-fluid" alt="" />
+                  <img src="assets/img/team/bryankent.jpg" class="img-fluid" alt="" />
                 </div>
                 <div class="member-info">
-                  <h4>Sarah Jhonson</h4>
+                  <h4>Bryankent Domondon</h4>
                   <span>Product Manager</span>
                   <p>
                     Aut maiores voluptates amet et quis praesentium qui senda
@@ -174,10 +174,10 @@ else {
             <div class="col-lg-6 mt-4">
               <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="300">
                 <div class="pic">
-                  <img src="assets/img/team/team-3.jpg" class="img-fluid" alt="" />
+                  <img src="assets/img/team/mark_jester.jpg" class="img-fluid" alt="" />
                 </div>
                 <div class="member-info">
-                  <h4>William Anderson</h4>
+                  <h4>Mark Jester Catabay</h4>
                   <span>CTO</span>
                   <p>
                     Quisquam facilis cum velit laborum corrupti fuga rerum quia
@@ -195,10 +195,10 @@ else {
             <div class="col-lg-6 mt-4">
               <div class="member d-flex align-items-start" data-aos="zoom-in" data-aos-delay="400">
                 <div class="pic">
-                  <img src="assets/img/team/team-4.jpg" class="img-fluid" alt="" />
+                  <img src="assets/img/team/ann_rose.jpg" class="img-fluid" alt="" />
                 </div>
                 <div class="member-info">
-                  <h4>Amanda Jepson</h4>
+                  <h4>Ann Rose Ramos</h4>
                   <span>Accountant</span>
                   <p>
                     Dolorum tempora officiis odit laborum officiis et et

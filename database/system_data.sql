@@ -92,21 +92,7 @@ VALUES (1, 'BSIT'),
   (4, 'BSA'),
   (5, 'BSHM');
 -- --------------------------------------------------------
---
--- Table structure for table `tbldocument`
---
-
-CREATE TABLE `tbldocument` (
-  `ID` int(11) NOT NULL,
-  `UserID` int(11) NOT NULL,
-  `TransferCertificate` varchar(120) DEFAULT NULL,
-  `TenMarksheeet` varchar(120) DEFAULT NULL,
-  `TwelveMarksheet` varchar(120) DEFAULT NULL,
-  `GraduationCertificate` varchar(120) DEFAULT NULL,
-  `PostgraduationCertificate` varchar(120) DEFAULT NULL,
-  `UploadDate` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE = InnoDB DEFAULT CHARSET = latin1;
--- --------------------------------------------------------
+-- 
 -- Table structure for table `tbluser`
 --
 
@@ -161,11 +147,6 @@ ADD PRIMARY KEY (`ID`);
 ALTER TABLE `tblcourse`
 ADD PRIMARY KEY (`ID`);
 --
--- Indexes for table `tbldocument`
---
-ALTER TABLE `tbldocument`
-ADD PRIMARY KEY (`ID`);
---
 -- Indexes for table `tbluser`
 --
 ALTER TABLE `tbluser`
@@ -191,12 +172,7 @@ MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,
 --
 ALTER TABLE `tblcourse`
 MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,
-  AUTO_INCREMENT = 15;
---
--- AUTO_INCREMENT for table `tbldocument`
---
-ALTER TABLE `tbldocument`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  AUTO_INCREMENT = 15
 --
 -- AUTO_INCREMENT for table `tbluser`
 --

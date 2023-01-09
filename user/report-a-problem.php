@@ -27,22 +27,8 @@ if (strlen($_SESSION['uid'] == 0)) {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
 
   <!-- Custom styles for this template-->
-  <link href="../assets/css/sb-admin-2.min.css" rel="stylesheet" />
+  <link href="../assets/css/dashboard-styles-min.css" rel="stylesheet" />
 
-  <style>
-    .php-email-form button[type="submit"] {
-      background: #47b2e4;
-      border: 0;
-      padding: 12px 34px;
-      color: #fff;
-      transition: 0.4s;
-      border-radius: 50px;
-    }
-
-    .php-email-form button[type="submit"]:hover {
-      background: #209dd8;
-    }
-  </style>
 </head>
 
 <body id="page-top">

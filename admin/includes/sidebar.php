@@ -2,9 +2,9 @@
   <!-- Sidebar - Brand -->
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
     <div class="sidebar-brand-icon rotate-n-15">
-      <i class="fas fa-laugh-wink"></i>
+      <img src="../assets/img/Pangasinan_State_University_logo.png" alt="logo" width="48px">
     </div>
-    <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+    <div class="sidebar-brand-text mx-3">PSU-ACC</div>
   </a>
 
   <!-- Divider -->

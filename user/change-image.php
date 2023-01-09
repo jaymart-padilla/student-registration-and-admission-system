@@ -37,10 +37,12 @@ if (strlen($_SESSION['uid'] == 0)) {
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
+    <meta name="description" content="PSU-ACC | Student Registration System" />
+    <meta name="author" content="Jaymart Padila" />
+    <title>PSU-ACC · Student Registration System</title>
 
-    <title>SB Admin 2 - Dashboard</title>
+    <!-- title icon -->
+    <link rel="icon" href="../assets/img/Pangasinan_State_University_logo.png" type="image/png" />
 
     <!-- Custom fonts for this template-->
     <link href="../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -50,7 +52,7 @@ if (strlen($_SESSION['uid'] == 0)) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
 
     <!-- Custom styles for this template-->
-    <link href="../assets/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="../assets/css/dashboard-styles-min.css" rel="stylesheet" />
   </head>
 
   <body id="page-top">
@@ -78,7 +80,7 @@ if (strlen($_SESSION['uid'] == 0)) {
             <!-- Content Row -->
             <!-- Change Image Form Contents  -->
             <div class="row">
-              <form name="submit" method="post" enctype="multipart/form-data">
+              <form name="submit" method="post" enctype="multipart/form-data" class="php-email-form">
                 <?php
                 $eid = $_GET['editid'];
                 $uid = $_SESSION['uid'];

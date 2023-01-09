@@ -43,10 +43,12 @@ if (strlen($_SESSION['uid'] == 0)) {
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
+    <meta name="description" content="PSU-ACC | Student Registration System" />
+    <meta name="author" content="Jaymart Padila" />
+    <title>PSU-ACC · Student Registration System</title>
 
-    <title>SB Admin 2 - Dashboard</title>
+    <!-- title icon -->
+    <link rel="icon" href="../assets/img/Pangasinan_State_University_logo.png" type="image/png" />
 
     <!-- Custom fonts for this template-->
     <link href="../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
@@ -56,7 +58,7 @@ if (strlen($_SESSION['uid'] == 0)) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
 
     <!-- Custom styles for this template-->
-    <link href="../assets/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="../assets/css/dashboard-styles-min.css" rel="stylesheet" />
   </head>
 
   <body id="page-top">
@@ -84,14 +86,14 @@ if (strlen($_SESSION['uid'] == 0)) {
             <!-- Content Row -->
             <!-- Edit Applicaton Form Contents  -->
             <div class="row">
-              <form name="submit" method="post" enctype="multipart/form-data"> <?php
-                                                                                $eid = $_GET['editid'];
-                                                                                $uid = $_SESSION['uid'];
-                                                                                $ret = mysqli_query($con, "select * from tbladmapplications where ID='$eid' && UserId='$uid'");
-                                                                                $cnt = 1;
-                                                                                while ($row = mysqli_fetch_array($ret)) {
+              <form name="submit" method="post" enctype="multipart/form-data" class="php-email-form"> <?php
+                                                                                                      $eid = $_GET['editid'];
+                                                                                                      $uid = $_SESSION['uid'];
+                                                                                                      $ret = mysqli_query($con, "select * from tbladmapplications where ID='$eid' && UserId='$uid'");
+                                                                                                      $cnt = 1;
+                                                                                                      while ($row = mysqli_fetch_array($ret)) {
 
-                                                                                ?>
+                                                                                                      ?>
                   <section class="formatter" id="formatter">
                     <div class="row">
                       <div class="col-12">
@@ -111,7 +113,7 @@ if (strlen($_SESSION['uid'] == 0)) {
                                       <select name='coursename' id="coursename" class="form-control white_bg">
                                         <option value="<?php echo $row['CourseApplied']; ?>"><?php echo $row['CourseApplied']; ?></option>
                                         <?php $query = mysqli_query($con, "select * from tblcourse");
-                                                                                  while ($row1 = mysqli_fetch_array($query)) {
+                                                                                                        while ($row1 = mysqli_fetch_array($query)) {
                                         ?>
                                           <option value="<?php echo $row1['CourseName']; ?>"><?php echo $row1['CourseName']; ?></option>
                                         <?php } ?>
@@ -252,8 +254,8 @@ if (strlen($_SESSION['uid'] == 0)) {
                               </div>
                               </hr>
                             <?php
-                                                                                  $cnt = $cnt + 1;
-                                                                                } ?>
+                                                                                                        $cnt = $cnt + 1;
+                                                                                                      } ?>
                             <div class="row" style="margin-top: 2%">
                               <div class="col-xl-6 col-lg-12">
                                 <button type="submit" name="submit" class="btn btn-info btn-min-width mr-1 mb-1">Update</button>
