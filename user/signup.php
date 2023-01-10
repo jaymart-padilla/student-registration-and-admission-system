@@ -2,23 +2,84 @@
 session_start();
 error_reporting(0);
 include('../includes/dbconnection.php');
+
+// Select the email for the admin with ID 1
+$query = "SELECT Email FROM tbladmin WHERE ID = 1";
+$result = mysqli_query($con, $query);
+
+// Fetch the result as an associative array
+$admin = mysqli_fetch_assoc($result);
+
+// Store the admin's email in a variable
+$senderEmail = $admin['Email'];
+
+// Use the PHPMailer library
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+
+//Load Composer's autoloader
+require '../includes/email/vendor/autoload.php';
+
 if (isset($_POST['submit'])) {
-  $fname = $_POST['firstname'];
-  $lname = $_POST['lastname'];
-  $contno = $_POST['contactno'];
   $email = $_POST['email'];
-  $password = md5($_POST['password']);
+  $contno = $_POST['contactno'];
+
+  $_SESSION['fname'] = $_POST['firstname'];
+  $_SESSION['lname'] = $_POST['lastname'];
+  $_SESSION['contno'] = $contno;
+  $_SESSION['email'] = $email;
+  $_SESSION['password'] = md5($_POST['password']);
+
   $ret = mysqli_query($con, "select Email from tbluser where Email='$email' || MobileNumber='$contno'");
   $result = mysqli_fetch_array($ret);
+  // if has email or contact already used, deny the registration | otherwise send an email verification code
   if ($result > 0) {
     echo "<script>alert('This email or Contact Number already associated with another account');</script>";
   } else {
-    $query = mysqli_query($con, "insert into tbluser(FirstName, LastName,MobileNumber, Email,  Password) value('$fname', '$lname','$contno', '$email', '$password' )");
-    if ($query) {
-      echo "<script>alert('You have successfully registered');</script>";
-      header("location: login.php");
+    // create a session for random otp code
+    $otp = rand(100000, 999999);
+    $_SESSION['otp'] = $otp;
+
+    //Create an instance; passing `true` enables exceptions
+    $mail = new PHPMailer(true);
+
+    // Set up the SMTP server
+    $mail->isSMTP();
+    $mail->SMTPAuth = true;
+    $mail->Host = "smtp.gmail.com";
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
+
+    // Authenticate with the SMTP server using the admin's email and password
+    $mail->Username = $senderEmail;
+    $mail->Password = "mdogemswrqerhfmb";
+
+    // Set the sender and recipient of the email
+    $mail->setFrom($senderEmail, 'OTP Verification');
+    $mail->addAddress($email);
+
+    // Set the subject and body of the email
+    $mail->isHTML(true);
+    $mail->Subject =
+      "Your verify code";
+    $mail->Body =
+      "<p>Dear user, </p> <h3>Your verify OTP code is $otp <br></h3>";
+
+    // Send the email and check if it was sent successfully
+    if (!$mail->send()) {
+?>
+      <script>
+        alert("<?php echo "Register Failed, Invalid Email " ?>");
+        window.location.replace('signup.php');
+      </script>
+    <?php
     } else {
-      echo "<script>alert('Something Went Wrong. Please try again');</script>";
+    ?>
+      <script>
+        alert("<?php echo "Register Successfully, OTP sent to " . $email ?>");
+        window.location.replace('verify-otp.php');
+      </script>
+<?php
     }
   }
 }

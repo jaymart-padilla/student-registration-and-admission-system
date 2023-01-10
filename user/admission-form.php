@@ -128,7 +128,7 @@ if (strlen($_SESSION['uid'] == 0)) {
                       <td><?php echo $row['CourseApplied']; ?></td>
                     </tr>
                     <tr>
-                      <th>Student Picture</th>
+                      <th>Student Photo</th>
                       <td><img src="userimages/<?php echo $row['UserPic']; ?>" width="200" height="150"></td>
                     </tr>
                     <tr>
@@ -167,7 +167,7 @@ if (strlen($_SESSION['uid'] == 0)) {
                   <table class="table mb-0">
                     <tr>
                       <th>#</th>
-                      <th>Board / University</th>
+                      <th>School</th>
                       <th>Year</th>
                     </tr>
                     <th>10th(Secondary)</th>
@@ -261,7 +261,7 @@ if (strlen($_SESSION['uid'] == 0)) {
 
                                 <div class="col-xl-6 col-lg-12">
                                   <fieldset>
-                                    <h5>Student Picture</h5>
+                                    <h5>Student Photo</h5>
                                     <div class="form-group">
                                       <input class="form-control white_bg" id="userpic" name="userpic" type="file" required>
                                     </div>
@@ -362,7 +362,7 @@ if (strlen($_SESSION['uid'] == 0)) {
                                   <table class="table mb-0">
                                     <tr>
                                       <th>#</th>
-                                      <th>Board / University</th>
+                                      <th>School</th>
                                       <th>Year</th>
                                     </tr>
                                     <tr>

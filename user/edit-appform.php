@@ -125,7 +125,7 @@ if (strlen($_SESSION['uid'] == 0)) {
 
                                 <div class="col-xl-6 col-lg-12">
                                   <fieldset>
-                                    <h5>Student Picture</h5>
+                                    <h5>Student Photo</h5>
                                     <div class="form-group">
                                       <img src="userimages/<?php echo $row['UserPic']; ?>" width="100" height="100"> <a href="change-image.php?editid=<?php echo $row['ID']; ?>"> &nbsp; Edit Image</a>
                                     </div>
@@ -226,7 +226,7 @@ if (strlen($_SESSION['uid'] == 0)) {
                                   <table class="table mb-0">
                                     <tr>
                                       <th>#</th>
-                                      <th>Board / University</th>
+                                      <th>School</th>
                                       <th>Year</th>
                                     </tr>
                                     <tr>

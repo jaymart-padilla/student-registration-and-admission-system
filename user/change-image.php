@@ -105,7 +105,7 @@ if (strlen($_SESSION['uid'] == 0)) {
 
                                 <div class="col-xl-6 col-lg-12">
                                   <fieldset>
-                                    <h5>New Student Picture </h5>
+                                    <h5>New Student Photo </h5>
                                     <div class="form-group">
                                       <input class="form-control white_bg" id="userpic" name="userpic" type="file" required="true">
                                     </div>
@@ -115,7 +115,7 @@ if (strlen($_SESSION['uid'] == 0)) {
                               <div class="row">
                                 <div class="col-xl-6 col-lg-12">
                                   <fieldset>
-                                    <h5>Old Student Picture</h5>
+                                    <h5>Old Student Photo</h5>
                                     <div class="form-group">
                                       <img src="userimages/<?php echo $row['UserPic']; ?>" width="100" height="100">
                                     </div>

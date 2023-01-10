@@ -116,7 +116,7 @@ if (strlen($_SESSION['aid'] == 0)) {
                   </tr>
 
                   <tr>
-                    <th>Student Picture</th>
+                    <th>Student Photo</th>
                     <td><img src="../user/userimages/<?php echo $row['UserPic']; ?>" width="200" height="150"></td>
                   </tr>
                   <tr>
@@ -157,7 +157,7 @@ if (strlen($_SESSION['aid'] == 0)) {
                 <table class="table mb-0">
                   <tr>
                     <th>#</th>
-                    <th>Board / University</th>
+                    <th>School</th>
                     <th>Year</th>
                   </tr>
 
