@@ -1,26 +1,38 @@
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
---
 -- Database: `system_data`
---
+SET time_zone = "+00:00";
 
--- --------------------------------------------------------
---
--- Table structure for table `tbladmapplications`
---
+-- TABLES
 
+-- user table
+CREATE TABLE `tbluser` (
+  `ID` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `FirstName` varchar(45) NOT NULL,
+  `LastName` varchar(45) NOT NULL,
+  `MobileNumber` int(10) NOT NULL,
+  `Email` varchar(60) NOT NULL,
+  `Password` varchar(60) NOT NULL,
+  `Privilege` varchar(20) NOT NULL,
+  `CreatedAt` timestamp NULL DEFAULT current_timestamp()
+);
+
+-- course table
+CREATE TABLE `tblcourse` (
+  `ID` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `CourseName` varchar(90) NOT NULL
+);
+
+-- applications table
 CREATE TABLE `tbladmapplications` (
-  `ID` int(11) NOT NULL,
+  `ID` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `UserId` char(10) NOT NULL,
   `CourseApplied` varchar(120) DEFAULT NULL,
   `FatherName` varchar(120) DEFAULT NULL,
   `MotherName` varchar(120) DEFAULT NULL,
   `DOB` date DEFAULT NULL,
-  `Nationality` varchar(120) DEFAULT NULL,
-  `Gender` varchar(200) DEFAULT NULL,
+  `Nationality` varchar(60) DEFAULT NULL,
+  `Gender` varchar(20) DEFAULT NULL,
   `CorrespondenceAdd` varchar(350) NOT NULL,
-  `PermanentAdd` varchar(350) NOT NULL,
+  `PermanentAdd` varchar(200) NOT NULL,
   `SecondaryBoard` varchar(120) DEFAULT NULL,
   `SecondaryBoardyop` varchar(120) DEFAULT NULL,
   `SSecondaryBoard` varchar(120) DEFAULT NULL,
@@ -35,80 +47,10 @@ CREATE TABLE `tbladmapplications` (
   `AdminRemarkDate` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp(),
   `UserPic` varchar(200) DEFAULT NULL,
   `ProfRes` varchar(200) DEFAULT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = latin1;
--- --------------------------------------------------------
---
--- Table structure for table `tbladmin`
---
+);
 
-CREATE TABLE `tbladmin` (
-  `ID` int(11) NOT NULL,
-  `AdminName` varchar(120) DEFAULT NULL,
-  `AdminuserName` varchar(20) NOT NULL,
-  `MobileNumber` int(10) NOT NULL,
-  `Email` varchar(120) NOT NULL,
-  `Password` varchar(120) DEFAULT NULL,
-  `AdminRegdate` timestamp NULL DEFAULT current_timestamp()
-) ENGINE = InnoDB DEFAULT CHARSET = latin1;
---
--- Dumping data for table `tbladmin`
---
 
-INSERT INTO `tbladmin` (
-    `ID`,
-    `AdminName`,
-    `AdminuserName`,
-    `MobileNumber`,
-    `Email`,
-    `Password`,
-    `AdminRegdate`
-  )
-VALUES (
-    1,
-    'Admin',
-    'admin',
-    1234567890,
-    'jrpadilla_20ac0174@psu.edu.ph',
-    '482c811da5d5b4bc6d497ffa98491e38',
-    '2022-12-29 17:00:00'
-  );
--- --------------------------------------------------------
---
--- Table structure for table `tblcourse`
---
-
-CREATE TABLE `tblcourse` (
-  `ID` int(11) NOT NULL,
-  `CourseName` varchar(90) DEFAULT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = latin1;
---
--- Dumping data for table `tblcourse`
---
-
-INSERT INTO `tblcourse` (`ID`, `CourseName`)
-VALUES (1, 'BSIT'),
-  (2, 'BSE'),
-  (3, 'BSBA'),
-  (4, 'BSA'),
-  (5, 'BSHM');
--- --------------------------------------------------------
--- 
--- Table structure for table `tbluser`
---
-
-CREATE TABLE `tbluser` (
-  `ID` int(11) NOT NULL,
-  `FirstName` varchar(45) DEFAULT NULL,
-  `LastName` varchar(45) DEFAULT NULL,
-  `MobileNumber` bigint(10) DEFAULT NULL,
-  `Email` varchar(120) DEFAULT NULL,
-  `Password` varchar(60) DEFAULT NULL,
-  `PostingDate` timestamp NULL DEFAULT current_timestamp()
-) ENGINE = InnoDB DEFAULT CHARSET = latin1;
---
--- Dumping data for table `tbluser`
---
-
+-- insert default values to tbluser
 INSERT INTO `tbluser` (
     `ID`,
     `FirstName`,
@@ -116,67 +58,45 @@ INSERT INTO `tbluser` (
     `MobileNumber`,
     `Email`,
     `Password`,
-    `PostingDate`
+    `Privilege`,
+    `CreatedAt`
   )
 VALUES (
     1,
+    'user',
+    'admin',
+    9519523387,
+    'jrpadilla_20ac0174@psu.edu.ph',
+    '482c811da5d5b4bc6d497ffa98491e38',
+    'admin',
+    '2022-12-17 17:00:00'
+  ),
+  (
+    2,
     'Jane',
     'Doe',
-    9519523387,
+    1234567890,
     'jane@gmail.com',
     '482c811da5d5b4bc6d497ffa98491e38',
-    '2022-12-29 17:00:00'
+    'student',
+    '2022-12-17 17:00:00'
+  ),
+  (
+    3,
+    'test',
+    'admin',
+    1234567891,
+    'testadmin@gmail.com',
+    '482c811da5d5b4bc6d497ffa98491e38',
+    'admin',
+    '2022-12-17 17:00:00'
   );
---
--- Indexes for dumped tables
---
 
---
--- Indexes for table `tbladmapplications`
---
-ALTER TABLE `tbladmapplications`
-ADD PRIMARY KEY (`ID`);
---
--- Indexes for table `tbladmin`
---
-ALTER TABLE `tbladmin`
-ADD PRIMARY KEY (`ID`);
---
--- Indexes for table `tblcourse`
---
-ALTER TABLE `tblcourse`
-ADD PRIMARY KEY (`ID`);
---
--- Indexes for table `tbluser`
---
-ALTER TABLE `tbluser`
-ADD PRIMARY KEY (`ID`);
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `tbladmapplications`
---
-ALTER TABLE `tbladmapplications`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,
-  AUTO_INCREMENT = 3;
---
--- AUTO_INCREMENT for table `tbladmin`
---
-ALTER TABLE `tbladmin`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,
-  AUTO_INCREMENT = 3;
---
--- AUTO_INCREMENT for table `tblcourse`
---
-ALTER TABLE `tblcourse`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,
-  AUTO_INCREMENT = 15;
---
--- AUTO_INCREMENT for table `tbluser`
---
-ALTER TABLE `tbluser`
-MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT,
-  AUTO_INCREMENT = 6;
-COMMIT;
+  
+-- insert default values to tblcourse
+INSERT INTO `tblcourse` (`ID`, `CourseName`)
+VALUES (1, 'BSIT'),
+  (2, 'BSE'),
+  (3, 'BSBA'),
+  (4, 'BSA'),
+  (5, 'BSHM');

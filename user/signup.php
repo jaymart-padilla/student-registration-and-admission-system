@@ -1,11 +1,12 @@
 <?php
 session_start();
-error_reporting(0);
+
+// connect db
 include('../includes/dbconnection.php');
 
-// Select the email for the admin with ID 1
-$query = "SELECT Email FROM tbladmin WHERE ID = 1";
-$result = mysqli_query($con, $query);
+// Select the email for the admin with ID of 1 (Head Admin)
+$query = "SELECT Email FROM tbluser WHERE Privilege='admin' AND ID = 1";
+$result = mysqli_query($conn, $query);
 
 // Fetch the result as an associative array
 $admin = mysqli_fetch_assoc($result);
@@ -20,66 +21,86 @@ use PHPMailer\PHPMailer\SMTP;
 //Load Composer's autoloader
 require '../includes/email/vendor/autoload.php';
 
+$formError = "";
+
 if (isset($_POST['submit'])) {
-  $email = $_POST['email'];
-  $contno = $_POST['contactno'];
 
-  $_SESSION['fname'] = $_POST['firstname'];
-  $_SESSION['lname'] = $_POST['lastname'];
-  $_SESSION['contno'] = $contno;
-  $_SESSION['email'] = $email;
-  $_SESSION['password'] = md5($_POST['password']);
+  // check for empty values
+  foreach ($_POST as $field => $value) {
+    if (empty($value) && $field != 'submit') {
+      $formError = $field . " is required. ";
+    }
+  }
 
-  $ret = mysqli_query($con, "select Email from tbluser where Email='$email' || MobileNumber='$contno'");
-  $result = mysqli_fetch_array($ret);
-  // if has email or contact already used, deny the registration | otherwise send an email verification code
-  if ($result > 0) {
-    echo "<script>alert('This email or Contact Number already associated with another account');</script>";
-  } else {
-    // create a session for random otp code
-    $otp = rand(100000, 999999);
-    $_SESSION['otp'] = $otp;
+  // if no empty values
+  if (empty($formError)) {
+    // XXS Protection
+    // filters all post data 
+    foreach ($_POST as $key => $value) {
+      $_POST[$key] = htmlspecialchars($value);
+    }
 
-    //Create an instance; passing `true` enables exceptions
-    $mail = new PHPMailer(true);
+    // for email and contact no. duplication alert
+    $email = $_POST['email'];
+    $contno = $_POST['contactno'];
 
-    // Set up the SMTP server
-    $mail->isSMTP();
-    $mail->SMTPAuth = true;
-    $mail->Host = "smtp.gmail.com";
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+    $_SESSION['fname'] = $_POST['firstname'];
+    $_SESSION['lname'] = $_POST['lastname'];
+    $_SESSION['contno'] = $contno;
+    $_SESSION['email'] = $email;
+    $_SESSION['password'] = md5($_POST['password']);
 
-    // Authenticate with the SMTP server using the admin's email and password
-    $mail->Username = $senderEmail;
-    $mail->Password = "mdogemswrqerhfmb";
-
-    // Set the sender and recipient of the email
-    $mail->setFrom($senderEmail, 'OTP Verification');
-    $mail->addAddress($email);
-
-    // Set the subject and body of the email
-    $mail->isHTML(true);
-    $mail->Subject =
-      "Your verify code";
-    $mail->Body =
-      "<p>Dear user, </p> <h3>Your verify OTP code is $otp <br></h3>";
-
-    // Send the email and check if it was sent successfully
-    if (!$mail->send()) {
-?>
-      <script>
-        alert("<?php echo "Register Failed, Invalid Email " ?>");
-        window.location.replace('signup.php');
-      </script>
-    <?php
+    $ret = mysqli_query($conn, "SELECT Email FROM tbluser WHERE (Email='$email' OR MobileNumber='$contno')");
+    $result = mysqli_fetch_array($ret);
+    // if has email or contact already used, deny the registration | otherwise send an email verification code
+    if ($result > 0) {
+      echo "<script>alert('This email or Contact Number already associated with another account');</script>";
     } else {
-    ?>
-      <script>
-        alert("<?php echo "Register Successfully, OTP sent to " . $email ?>");
-        window.location.replace('verify-otp.php');
-      </script>
+      // create a session for random otp code
+      $otp = rand(100000, 999999);
+      $_SESSION['otp'] = $otp;
+
+      //Create an instance; passing `true` enables exceptions
+      $mail = new PHPMailer(true);
+
+      // Set up the SMTP server
+      $mail->isSMTP();
+      $mail->SMTPAuth = true;
+      $mail->Host = "smtp.gmail.com";
+      $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+      $mail->Port = 587;
+
+      // Authenticate with the SMTP server using the admin's email and password
+      $mail->Username = $senderEmail;
+      $mail->Password = "mdogemswrqerhfmb";
+
+      // Set the sender and recipient of the email
+      $mail->setFrom($senderEmail, 'OTP Verification');
+      $mail->addAddress($email);
+
+      // Set the subject and body of the email
+      $mail->isHTML(true);
+      $mail->Subject =
+        "Your verify code";
+      $mail->Body =
+        "<p>Dear user, </p> <h3>Your verify OTP code is $otp <br></h3>";
+
+      // Send the email and check if it was sent successfully
+      if (!$mail->send()) {
+?>
+        <script>
+          alert("<?php echo "Register Failed, Invalid Email " ?>");
+          window.location.replace('signup.php');
+        </script>
+      <?php
+      } else {
+      ?>
+        <script>
+          alert("<?php echo "Register Successfully, OTP sent to " . $email ?>");
+          window.location.replace('verify-otp.php');
+        </script>
 <?php
+      }
     }
   }
 }
@@ -97,7 +118,7 @@ if (isset($_POST['submit'])) {
   <title>PSU-ACC · Sign up</title>
 
   <!-- title icon -->
-  <link rel="icon" href="../assets/img/Pangasinan_State_University_logo.png" />
+  <link rel="icon" href="../assets/img/logo-light.png" />
 
   <!-- bootstrap css -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
@@ -134,8 +155,8 @@ if (isset($_POST['submit'])) {
 
 <body class="text-center">
   <main class="form-signin w-100 m-auto">
-    <form method="post" name="signup" onSubmit="return checkpass();">
-      <a href="../index.php"><img class="mb-3" src="../assets/img/Pangasinan_State_University_logo.png" alt="" width="72" height="72" /></a>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" name="signup" onSubmit="return checkpass();">
+      <a href="../index.php"><img class="mb-3" src="../assets/img/logo-dark.png" alt="" width="72" height="72" /></a>
       <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
 
       <!-- name -->
@@ -163,6 +184,14 @@ if (isset($_POST['submit'])) {
       <div class="input-group mb-3">
         <input type="password" name="repeatpassword" id="repeatpassword" class="form-control" placeholder="Repeat password" aria-label="repeat-password" required />
       </div>
+
+      <?php
+      if (!empty($formError)) {
+        echo "
+                              <p class='text-danger text-center m-0 p-0'>*$formError</p>
+                              ";
+      }
+      ?>
 
       <!-- submit -->
       <button type="submit" name="submit" class="w-100 btn btn-lg" id="btn-get-started">

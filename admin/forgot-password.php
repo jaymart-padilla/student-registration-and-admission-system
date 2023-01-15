@@ -1,21 +1,40 @@
 <?php
 session_start();
-error_reporting(0);
+
 include('../includes/dbconnection.php');
 
+$formError = "";
+
 if (isset($_POST['submit'])) {
-  $mobno = $_POST['mobilenumber'];
-  $email = $_POST['email'];
+  // check for empty values
+  foreach ($_POST as $field => $value) {
+    if (empty($value) && $field != 'submit') {
+      $formError = $field . " is required. ";
+    }
+  }
 
-  $query = mysqli_query($con, "select ID from tbladmin where  Email='$email' and  MobileNumber ='$mobno' ");
-  $ret = mysqli_fetch_array($query);
-  if ($ret > 0) {
-    $_SESSION['mobilenumber'] = $mobno;
-    $_SESSION['email'] = $email;
+  // if no empty values
+  if (empty($formError)) {
+    // XXS Protection
+    // filters all post data 
+    foreach ($_POST as $key => $value) {
+      $_POST[$key] = htmlspecialchars($value);
+    }
 
-    echo "<script type='text/javascript'> document.location ='reset-password.php'; </script>";
-  } else {
-    echo "<script>alert('Invalid Details. Please try again.');</script>";
+    $mobno = $_POST['mobilenumber'];
+    $email = $_POST['email'];
+
+    // check for match
+    $query = mysqli_query($conn, "SELECT ID FROM tbluser WHERE Privilege='admin' AND Email='$email' AND MobileNumber ='$mobno'");
+    $ret = mysqli_fetch_array($query);
+    if ($ret > 0) {
+      $_SESSION['mobilenumber'] = $mobno;
+      $_SESSION['email'] = $email;
+
+      echo "<script type='text/javascript'> document.location ='reset-password.php'; </script>";
+    } else {
+      echo "<script>alert('Invalid Details. Please try again.');</script>";
+    }
   }
 }
 ?>
@@ -31,7 +50,7 @@ if (isset($_POST['submit'])) {
   <title>PSU-ACC · Admin | Recover password</title>
 
   <!-- title icon -->
-  <link rel="icon" href="../assets/img/Pangasinan_State_University_logo.png" />
+  <link rel="icon" href="../assets/img/logo-light.png" />
 
   <!-- bootstrap css -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
@@ -56,9 +75,9 @@ if (isset($_POST['submit'])) {
 
 <body>
   <main class="form-signin w-100 m-auto">
-    <form action="" method="post">
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
       <div class="text-center">
-        <a href="../index.php"><img class="mb-3" src="../assets/img/Pangasinan_State_University_logo.png" alt="" width="72" height="72" /></a>
+        <a href="../index.php"><img class="mb-3" src="../assets/img/logo-dark.png" alt="" width="72" height="72" /></a>
         <h1 class="h3 mb-3 fw-normal">Admin Recover Password</h1>
       </div>
 
@@ -71,6 +90,14 @@ if (isset($_POST['submit'])) {
       <div class="input-group mb-3">
         <input type="tel" name="mobilenumber" id="mobilenumber" class="form-control" placeholder="Contact number" aria-label="contact number" required />
       </div>
+
+      <?php
+      if (!empty($formError)) {
+        echo "
+                              <p class='text-danger text-center m-0 p-0'>*$formError</p>
+                              ";
+      }
+      ?>
 
       <!-- submit -->
       <button type="submit" name="submit" class="w-100 btn btn-lg" id="btn-get-started">

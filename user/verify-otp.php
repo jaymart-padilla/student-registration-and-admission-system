@@ -1,15 +1,23 @@
 <?php
 session_start();
-error_reporting(0);
+
+// connects to db
 include('../includes/dbconnection.php');
 
 if (isset($_POST['submit'])) {
+  // XXS Protection
+  // filters all session data 
+  foreach ($_SESSION as $key => $value) {
+    $_SESSION[$key] = htmlspecialchars($value);
+  }
+
   // collect session data
   $fname = $_SESSION['fname'];
   $lname = $_SESSION['lname'];
   $contno = $_SESSION['contno'];
   $email = $_SESSION['email'];
   $password = $_SESSION['password'];
+  $privilege = 'student';
 
   // OTP's to compare
   $otp = $_SESSION['otp'];
@@ -25,7 +33,7 @@ if (isset($_POST['submit'])) {
     <?php
   } else {
     // save session data to the db
-    $query = mysqli_query($con, "insert into tbluser(FirstName, LastName,MobileNumber, Email, Password) value('$fname', '$lname','$contno', '$email', '$password' )");
+    $query = mysqli_query($conn, "INSERT INTO tbluser(FirstName, LastName, MobileNumber, Email, Password, Privilege) VALUE ('$fname', '$lname','$contno', '$email', '$password', '$privilege' )");
     // if successful, proceed | otherwise, alert an error
     if ($query) {
     ?>
@@ -55,7 +63,7 @@ if (isset($_POST['submit'])) {
   <title>PSU-ACC · Sign up</title>
 
   <!-- title icon -->
-  <link rel="icon" href="../assets/img/Pangasinan_State_University_logo.png" />
+  <link rel="icon" href="../assets/img/logo-light.png" />
 
   <!-- bootstrap css -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
@@ -81,8 +89,8 @@ if (isset($_POST['submit'])) {
 
 <body class="text-center">
   <main class="form-signin w-100 m-auto">
-    <form method="post" name="signup" onSubmit="return checkpass();">
-      <a href="../index.php"><img class="mb-3" src="../assets/img/Pangasinan_State_University_logo.png" alt="" width="72" height="72" /></a>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" name="signup" onSubmit="return checkpass();">
+      <a href="../index.php"><img class="mb-3" src="../assets/img/logo-dark.png" alt="" width="72" height="72" /></a>
       <h1 class="h3 mb-3 fw-normal">Verify Your Email</h1>
 
       <!-- enter otp -->

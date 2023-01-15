@@ -1,11 +1,15 @@
 <?php
 
 // connect db
-include_once('/xampp/htdocs/projects/mycollege/includes/dbconnection.php');
+include_once('/xampp/htdocs/projects/student_registration_system/includes/dbconnection.php');
 
-// Select the email for the admin with ID 1
-$query = "SELECT Email FROM tbladmin WHERE ID = 1";
-$result = mysqli_query($con, $query);
+// Use the PHPMailer library
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+
+// Select the email for the admin with ID of 1 (Head Admin)
+$query = "SELECT Email FROM tbluser WHERE Privilege='admin' AND ID = 1";
+$result = mysqli_query($conn, $query);
 
 // Fetch the result as an associative array
 $admin = mysqli_fetch_assoc($result);
@@ -13,18 +17,21 @@ $admin = mysqli_fetch_assoc($result);
 // Store the admin's email in a variable
 $toEmail = $admin['Email'];
 
-// Get the user's name, email, subject, and message from the form submission
+// XXS Protection
+// filters all post data 
+foreach ($_POST as $key => $value) {
+  $_POST[$key] = htmlspecialchars($value);
+}
+
+// Get the filtered user's name, email, subject, and message from the form submission
 $name = $_POST["name"];
 $email = $_POST["email"];
 $subject = $_POST["subject"];
 $message = $_POST["message"];
 
-// Use the PHPMailer library
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 
 //Load Composer's autoloader
-require '/xampp/htdocs/projects/mycollege/includes/email/vendor/autoload.php';
+require '/xampp/htdocs/projects/student_registration_system/includes/email/vendor/autoload.php';
 
 //Create an instance; passing `true` enables exceptions
 $mail = new PHPMailer(true);
@@ -55,5 +62,4 @@ if ($mail->send()) {
   echo "<script>alert('Email did not sent!')</script>";
 }
 
-header("Location: http://localhost/projects/mycollege/");
-// TODO: feed this to chatgpt for documentations && make a report a problem form in the user dashboard/header as well
+header("Location: http://localhost/projects/student_registration_system/");

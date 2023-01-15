@@ -1,10 +1,10 @@
 <?php
 session_start();
-error_reporting(0);
+
+// connects to db
 include('../includes/dbconnection.php');
-if (strlen($_SESSION['uid'] == 0)) {
-  header('location:logout.php');
-}
+// check for privilege
+include('includes/access.php');
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +47,7 @@ if (strlen($_SESSION['uid'] == 0)) {
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
-        <div class="container-fluid">
+        <div class="container-fluid px-4">
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
@@ -58,10 +58,10 @@ if (strlen($_SESSION['uid'] == 0)) {
           <div class="row">
             <!-- Input Mask start -->
             <!-- Formatter start -->
-            <form action="http://localhost/projects/mycollege/includes/email/email-script.php" method="post" role="form" class="php-email-form">
+            <form action="http://localhost/projects/student_registration_system/includes/email/email-script.php" method="post" role="form" class="php-email-form">
               <?php
               $pid = $_SESSION['uid'];
-              $ret = mysqli_query($con, "select * from tbluser where ID='$pid'");
+              $ret = mysqli_query($conn, "SELECT * FROM tbluser WHERE ID='$pid' AND Privilege = 'student'");
               $cnt = 1;
               while ($row = mysqli_fetch_array($ret)) {
 
@@ -130,4 +130,3 @@ if (strlen($_SESSION['uid'] == 0)) {
 </body>
 
 </html>
-?>

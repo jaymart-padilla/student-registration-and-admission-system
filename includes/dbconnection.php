@@ -1,5 +1,7 @@
 <?php
-$con=mysqli_connect("localhost", "root", "", "system_data");
-if(mysqli_connect_errno()){
-echo "Connection Fail".mysqli_connect_error();
+// connect to the database
+$conn = mysqli_connect("localhost", "root", "", "system_data");
+// Check for connection errors
+if (mysqli_connect_errno()) {
+  die("Connection Fail" . mysqli_connect_error());
 }

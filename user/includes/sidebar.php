@@ -2,7 +2,7 @@
   <!-- Sidebar - Brand -->
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
     <div class="sidebar-brand-icon">
-      <img src="../assets/img/Pangasinan_State_University_logo.png" alt="logo" width="48px">
+      <img src="../assets/img/logo-light.png" alt="logo" width="48px">
     </div>
     <div class="sidebar-brand-text mx-3">PSU-ACC</div>
   </a>

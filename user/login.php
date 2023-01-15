@@ -1,17 +1,39 @@
 <?php
 session_start();
-error_reporting(0);
+
+// connect to the db
 include('../includes/dbconnection.php');
+
+$formError = "";
+
 if (isset($_POST['login'])) {
-  $emailcon = $_POST['emailcont'];
-  $password = md5($_POST['password']);
-  $query = mysqli_query($con, "select ID from tbluser where (Email='$emailcon' || MobileNumber='$emailcon') && Password='$password' ");
-  $ret = mysqli_fetch_array($query);
-  if ($ret > 0) {
-    $_SESSION['uid'] = $ret['ID'];
-    echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-  } else {
-    echo "<script>alert('Invalid Details');</script>";
+  // check for empty values
+  foreach ($_POST as $field => $value) {
+    if (empty($value) && $field != 'login') {
+      $formError = $field . " is required. ";
+    }
+  }
+
+  // if no empty values
+  if (empty($formError)) {
+    // XXS Protection
+    // filters all post data 
+    foreach ($_POST as $key => $value) {
+      $_POST[$key] = htmlspecialchars($value);
+    }
+
+    $emailcon = $_POST['emailcont'];
+    $password = md5($_POST['password']);
+    // check for matches based from input
+    $query = mysqli_query($conn, "SELECT ID FROM tbluser WHERE (Email='$emailcon' || MobileNumber='$emailcon') AND Password='$password' AND Privilege = 'student'");
+    $ret = mysqli_fetch_array($query);
+    if ($ret > 0) {
+      $_SESSION['uid'] = $ret['ID'];
+      $_SESSION['id'] = $ret['ID'];
+      echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+    } else {
+      echo "<script>alert('Invalid Details');</script>";
+    }
   }
 }
 ?>
@@ -27,7 +49,7 @@ if (isset($_POST['login'])) {
   <title>PSU-ACC · Login</title>
 
   <!-- title icon -->
-  <link rel="icon" href="../assets/img/Pangasinan_State_University_logo.png" />
+  <link rel="icon" href="../assets/img/logo-light.png" />
 
   <!-- bootstrap css -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
@@ -52,9 +74,9 @@ if (isset($_POST['login'])) {
 
 <body>
   <main class="form-signin w-100 m-auto">
-    <form action="" name="login" method="post">
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="login" method="post">
       <div class="text-center">
-        <a href="../index.php"><img class="mb-3" src="../assets/img/Pangasinan_State_University_logo.png" alt="" width="72" height="72" /></a>
+        <a href="../index.php"><img class="mb-3" src="../assets/img/logo-dark.png" alt="" width="72" height="72" /></a>
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
       </div>
 

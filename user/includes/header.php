@@ -13,13 +13,12 @@
         <span class="mr-2 d-none d-lg-inline text-gray-600 small">
           <?php
           $uid = $_SESSION['uid'];
-          $ret = mysqli_query($con, "select FirstName, LastName from tbluser where ID='$uid'");
+          $ret = mysqli_query($conn, "SELECT FirstName, LastName FROM tbluser WHERE ID='$uid' AND Privilege='student'");
           $row = mysqli_fetch_array($ret);
-          $firstname = $row['FirstName'];
-          $lastname = $row['LastName'];
+          $name = $row['FirstName'] . " " . $row['LastName'];
 
           ?>
-          <?php echo "$firstname $lastname"; ?>
+          <?php echo $name; ?>
         </span>
         <img class="img-profile rounded-circle" src="../assets/img/undraw_profile.svg" />
       </a>

@@ -1,19 +1,39 @@
 <?php
 session_start();
-error_reporting(0);
+
+// connects to db
 include('../includes/dbconnection.php');
-error_reporting(0);
+
+$formError = "";
 
 if (isset($_POST['submit'])) {
-  $mobno = $_SESSION['mobilenumber'];
-  $email = $_SESSION['email'];
-  $newpassword = md5($_POST['newpassword']);
-  $query = mysqli_query($con, "update tbluser set Password ='$newpassword' where  Email='$email' && MobileNumber = '$mobno'");
+  // check for empty values
+  foreach ($_POST as $field => $value) {
+    if (empty($value) && $field != 'submit') {
+      $formError = $field . " is required. ";
+    }
+  }
 
-  if ($query) {
-    echo "<script>alert('Password successfully changed');</script>";
-    session_destroy();
-    header('location: login.php');
+  // if no empty values
+  if (empty($formError)) {
+    // XXS Protection
+    // filters all post data 
+    foreach ($_POST as $key => $value) {
+      $_POST[$key] = htmlspecialchars($value);
+    }
+
+    $mobno = $_SESSION['mobilenumber'];
+    $email = $_SESSION['email'];
+    $newpassword = md5($_POST['newpassword']);
+
+    // update data from db
+    $query = mysqli_query($conn, "UPDATE tbluser SET Password ='$newpassword' WHERE Email='$email' AND MobileNumber = '$mobno' AND Privilege = 'student'");
+
+    if ($query) {
+      echo "<script>alert('Password successfully changed');</script>";
+      session_destroy();
+      header('location: login.php');
+    }
   }
 }
 ?>
@@ -30,7 +50,7 @@ if (isset($_POST['submit'])) {
   <title>PSU-ACC · Reset password</title>
 
   <!-- title icon -->
-  <link rel="icon" href="../assets/img/Pangasinan_State_University_logo.png" />
+  <link rel="icon" href="../assets/img/logo-light.png" />
 
   <!-- bootstrap css -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
@@ -70,9 +90,9 @@ if (isset($_POST['submit'])) {
 
 <body>
   <main class="form-signin w-100 m-auto">
-    <form name="resetpassword" method="post" onsubmit="return checkpass();">
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="resetpassword" method="post" onsubmit="return checkpass();">
       <div class="text-center">
-        <a href="../index.php"><img class="mb-3" src="../assets/img/Pangasinan_State_University_logo.png" alt="" width="72" height="72" /></a>
+        <a href="../index.php"><img class="mb-3" src="../assets/img/logo-dark.png" alt="" width="72" height="72" /></a>
         <h1 class="h3 mb-3 fw-normal">PSU-ACC Reset Password</h1>
       </div>
 
@@ -85,6 +105,14 @@ if (isset($_POST['submit'])) {
       <div class="input-group mb-3">
         <input type="password" name="confirmpassword" id="confirmpassword" class="form-control" placeholder="Confirm new password" aria-label="confirm new password" required />
       </div>
+
+      <?php
+      if (!empty($formError)) {
+        echo "
+                              <p class='text-danger text-center m-0 p-0'>*$formError</p>
+                              ";
+      }
+      ?>
 
       <!-- submit -->
       <button type="submit" name="submit" class="w-100 btn btn-lg" id="btn-get-started">

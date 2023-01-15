@@ -8,7 +8,7 @@
   <ul class="navbar-nav ml-auto">
     <!-- Nav Item - Alerts -->
     <!-- getting various info to list in the notification, if there is -->
-    <?php $query = mysqli_query($con, "SELECT  tbladmapplications.ID as appid,tbluser.FirstName, tbluser.LastName,tbladmapplications.CourseApplieddate from tbladmapplications join tbluser on tbluser.ID=tbladmapplications.UserId where tbladmapplications.AdminStatus is null");
+    <?php $query = mysqli_query($conn, "SELECT tbladmapplications.ID AS appid,tbluser.FirstName, tbluser.LastName,tbladmapplications.CourseApplieddate FROM tbladmapplications JOIN tbluser ON tbluser.ID=tbladmapplications.UserId WHERE tbladmapplications.AdminStatus IS NULL AND tbluser.Privilege = 'student'");
     $num = mysqli_num_rows($query);
     ?>
     <li class="nav-item dropdown no-arrow mx-1">
@@ -17,7 +17,7 @@
           <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
         </svg>
         <!-- Counter - Alerts -->
-
+        <!-- alert counts -->
         <?php
         if ($num > 0) {
           echo '<span class="badge badge-danger badge-counter">' . $num . '</span>';
@@ -73,11 +73,12 @@
     <li class="nav-item dropdown no-arrow">
       <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+          <!-- fetch name from db -->
           <?php
           $admid = $_SESSION['aid'];
-          $ret = mysqli_query($con, "select AdminName from tbladmin where ID='$admid'");
+          $ret = mysqli_query($conn, "SELECT FirstName, LastName FROM tbluser WHERE ID='$admid' AND Privilege='admin'");
           $row = mysqli_fetch_array($ret);
-          $name = $row['AdminName'];
+          $name = $row['FirstName'] . " " . $row['LastName'];
 
           ?>
           <?php echo $name; ?>
