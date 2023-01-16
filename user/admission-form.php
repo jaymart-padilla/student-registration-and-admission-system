@@ -407,12 +407,12 @@ if (isset($_POST['submit'])) {
                                   <tr>
                                     <th>Graduation</th>
                                     <td> <input class="form-control white_bg" id="graduation" name="graduation" placeholder="School" type="text"></td>
-                                    <td> <input class="form-control white_bg" id="graduationpyeaer" name="graduationpyeaer" placeholder="Year" type="number"></td>
+                                    <td> <input class="form-control white_bg" id="graduationpyeaer" name="graduationpyeaer" placeholder="Year" type="number" required></td>
                                   </tr>
                                   <tr>
                                     <th>Post Graduation</th>
                                     <td> <input class="form-control white_bg" id="postgraduation" name="postgraduation" placeholder="School" type="text"></td>
-                                    <td> <input class="form-control white_bg" id="pgpyeaer" name="pgpyear" placeholder="Year" type="number"></td>
+                                    <td> <input class="form-control white_bg" id="pgpyeaer" name="pgpyear" placeholder="Year" type="number" required></td>
                                   </tr>
                                 </table>
                               </div>

@@ -49,6 +49,7 @@ if (isset($_POST['submit'])) {
 
     if ($query) {
       echo '<script>alert("Data has been updated successfully.")</script>';
+      header('location: admission-form.php');
     } else {
       echo '<script>alert("Something went wrong. Please try again.")</script>';
     }

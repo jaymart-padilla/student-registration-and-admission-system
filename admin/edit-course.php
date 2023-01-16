@@ -30,6 +30,7 @@ if (isset($_POST['submit'])) {
     $query = mysqli_query($conn, "UPDATE tblcourse SET CourseName = '$coursename' WHERE ID=$eid");
     if ($query) {
       echo '<script>alert("Course has been Update.")</script>';
+      header('location: manage-course.php');
     } else {
       echo '<script>alert("Something Went Wrong. Please try again.")</script>';
     }

@@ -34,6 +34,7 @@ if (isset($_POST['submit'])) {
       $query = mysqli_query($conn, "UPDATE tbladmapplications SET ProfRes='$profrespic' WHERE ID='$eid' && UserId='$uid'");
       if ($query) {
         echo '<script>alert("Profile image updated successfully.")</script>';
+        header('location: admission-form.php');
       } else {
         echo '<script>alert("Something Went Wrong. Please try again.")</script>';
       }
