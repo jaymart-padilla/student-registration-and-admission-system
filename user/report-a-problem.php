@@ -12,12 +12,13 @@ include('includes/access.php');
 
 <head>
   <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta name="description" content="PSU-ACC | Student Registration System | Login page" />
+  <meta name="author" content="Jaymart Padilla" />
+  <title>PSU-ACC · Login</title>
 
-  <title>SB Admin 2 - Dashboard</title>
+  <!-- title icon -->
+  <link rel="icon" href="../assets/img/logo-light.png" />
 
   <!-- Custom fonts for this template-->
   <link href="../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />

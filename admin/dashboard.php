@@ -20,7 +20,7 @@ include('includes/access.php');
   <title>PSU-ACC · Student Registration System</title>
 
   <!-- title icon -->
-  <link rel="icon" href="assets/img/logo-light.png" type="image/png" />
+  <link rel="icon" href="../assets/img/logo-light.png" type="image/png" />
 
   <!-- Custom fonts for this template-->
   <link href="../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
