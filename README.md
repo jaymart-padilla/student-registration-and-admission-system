@@ -1,6 +1,6 @@
 <h1>Student Registration System</h1>
 
-Head Admin's account:
+Super Admin's account:
 
 firstname: user
 lastname: admin
@@ -8,7 +8,7 @@ mobile no: 9519523387
 email: jrpadilla_20ac0174@psu.edu.ph
 password: password123
 
-!-------------------------------------!
+<hr/>
 
 Student's account (sample):
 
