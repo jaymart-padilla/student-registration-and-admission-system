@@ -1,6 +1,6 @@
 <h1>Student Registration System</h1>
 
-Super Admin's account:
+### Super Admin's account:
 
 firstname: user
 lastname: admin
@@ -10,10 +10,10 @@ password: password123
 
 <hr/>
 
-Student's account (sample):
+### Student's account (sample):
 
 mobile no: 1234567890
 email: jane@gmail.com
 password: password123
 
-Refer: database/system_data.sql
+***Refer: database/system_data.sql***
