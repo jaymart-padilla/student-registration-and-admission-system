@@ -3,12 +3,14 @@ session_start();
 
 // connects to db
 include('../includes/dbconnection.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 if (isset($_POST['submit'])) {
   // XXS Protection
   // filters all session data 
   foreach ($_SESSION as $key => $value) {
-    $_SESSION[$key] = htmlspecialchars($value);
+    $_SESSION[$key] = filterInput($conn, $value);
   }
 
   // collect session data
@@ -32,18 +34,26 @@ if (isset($_POST['submit'])) {
     </script>
     <?php
   } else {
-    // save session data to the db
-    $query = mysqli_query($conn, "INSERT INTO tbluser(FirstName, LastName, MobileNumber, Email, Password, Privilege) VALUE ('$fname', '$lname','$contno', '$email', '$password', '$privilege' )");
-    // if successful, proceed | otherwise, alert an error
-    if ($query) {
+    // prepare the INSERT statement
+    $stmt = mysqli_prepare($conn, "INSERT INTO tbluser(FirstName, LastName, MobileNumber, Email, Password, Privilege) VALUES (?, ?, ?, ?, ?, ?)");
+
+    if ($stmt) {
+      // bind params
+      mysqli_stmt_bind_param($stmt, "ssssss", $fname, $lname, $contno, $email, $password, $privilege);
+
+      if (mysqli_stmt_execute($stmt)) {
     ?>
-      <script>
-        alert("Verfiy account done, you may sign in now");
-        window.location.replace("login.php");
-      </script>
+        <script>
+          alert("Verfiy account done, you may sign in now");
+          window.location.replace("login.php");
+        </script>
     <?php
-    } else {
-      echo "<script>alert('Something Went Wrong. Please try again');</script>";
+      } else {
+        echo "<script>alert('Something Went Wrong. Please try again');</script>";
+      }
+
+      // close the statement
+      mysqli_stmt_close($stmt);
     }
     ?>
 <?php

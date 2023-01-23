@@ -5,6 +5,8 @@ session_start();
 include('../includes/dbconnection.php');
 // check for privilege
 include('includes/access.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -23,20 +25,25 @@ if (isset($_POST['submit'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     $admrmk = $_POST['AdminRemark'];
     $admsta = $_POST['status'];
-    $toemail = $_POST['useremail'];
 
-    $query = mysqli_query($conn, "UPDATE tbladmapplications SET AdminRemark='$admrmk',AdminStatus='$admsta' WHERE ID='$cid'");
-    if ($query) {
-      echo "<script>alert('Admin Remark and Status has been updated.');</script>";
-      echo "<script>window.location.href ='dashboard.php'</script>";
-    } else {
-      echo "<script>alert('Something Went Wrong. Please try again.');</script>";
-      echo "<script>window.location.href ='dashboard.php'</script>";
+    // Prepare the UPDATE statement
+    $stmt = mysqli_prepare($conn, "UPDATE tbladmapplications SET AdminRemark = ?, AdminStatus = ? WHERE ID = ?");
+
+    if ($stmt) {
+      // Bind the parameters
+      mysqli_stmt_bind_param($stmt, "ssi", $admrmk, $admsta, $cid);
+      if (mysqli_stmt_execute($stmt)) {
+        echo "<script>window.location.href ='dashboard.php'</script>";
+      } else {
+        echo "<script>alert('Something Went Wrong. Please try again.');</script>";
+        echo "<script>window.location.href ='dashboard.php'</script>";
+      }
+      mysqli_stmt_close($stmt);
     }
   }
 }
@@ -94,7 +101,6 @@ if (isset($_POST['submit'])) {
             <!-- Input Mask start -->
 
             <!-- Formatter start -->
-
             <?php
             $cid = $_GET['aticid'];
             $ret = mysqli_query($conn, "SELECT tbladmapplications.*,tbluser.FirstName,tbluser.LastName,tbluser.MobileNumber,tbluser.Email FROM tbladmapplications INNER JOIN tbluser ON tbluser.ID=tbladmapplications.UserId WHERE tbladmapplications.ID='$cid' AND tbluser.Privilege='student'");
@@ -202,8 +208,7 @@ if (isset($_POST['submit'])) {
 
                 <?php if ($row['AdminStatus'] == "" || $row['AdminStatus'] == "3") { ?>
 
-                  <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="submit" method="post" enctype="multipart/form-data" class="php-email-form">
-                    <input type="hidden" name="useremail" value="<?php echo $row['Email']; ?>">
+                  <form name="submit" method="post" enctype="multipart/form-data" class="php-email-form">
                     <tr>
                       <th>Admin Remark:</th>
                       <td>
@@ -214,7 +219,7 @@ if (isset($_POST['submit'])) {
                           $val = "";
                         }
                         ?>
-                        <textarea name="AdminRemark" rows="12" cols="14" class="form-control wd-450" required="true"><?php echo $val; ?></textarea>
+                        <textarea name="AdminRemark" rows="12" cols="14" class="form-control wd-450" maxlength="255" required="true"><?php echo $val; ?></textarea>
                       </td>
                     </tr>
 

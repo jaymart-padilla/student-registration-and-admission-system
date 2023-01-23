@@ -5,6 +5,8 @@ session_start();
 include('../includes/dbconnection.php');
 // check for privilege
 include('includes/access.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -24,7 +26,7 @@ if (isset($_POST['submit'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     $coursename = $_POST['coursename'];
@@ -44,12 +46,19 @@ if (isset($_POST['submit'])) {
     $pguni = $_POST['postgraduation'];
     $pgyop = $_POST['pgpyear'];
 
-    // update data from db
-    $query = mysqli_query($conn, "UPDATE tbladmapplications SET CourseApplied='$coursename',FatherName='$fathername',MotherName='$mothername',DOB='$dob',Nationality='$nationality',Gender='$gender',CorrespondenceAdd='$coradd',PermanentAdd='$peradd',SecondaryBoard='$secboard',SecondaryBoardyop='$secyop',SSecondaryBoard='$ssecboard',SSecondaryBoardyop='$ssecyop',GraUni='$grauni',GraUniyop='$grayop',PGUni='$pguni',PGUniyop='$pgyop' WHERE ID='$eid' && UserId='$uid'");
+    // Prepare the UPDATE statement
+    $stmt = mysqli_prepare($conn, "UPDATE tbladmapplications SET CourseApplied=?, FatherName=?, MotherName=?, DOB=?, Nationality=?, Gender=?, CorrespondenceAdd=?, PermanentAdd=?, SecondaryBoard=?, SecondaryBoardyop=?, SSecondaryBoard=?, SSecondaryBoardyop=?, GraUni=?, GraUniyop=?, PGUni=?, PGUniyop=? WHERE ID=? AND UserId=?");
 
-    if ($query) {
-      echo '<script>alert("Data has been updated successfully.")</script>';
-      header('location: admission-form.php');
+    if ($stmt) {
+      mysqli_stmt_bind_param($stmt, "ssssssssssssssssis", $coursename, $fathername, $mothername, $dob, $nationality, $gender, $coradd, $peradd, $secboard, $secyop, $ssecboard, $ssecyop, $grauni, $grayop, $pguni, $pgyop, $eid, $uid);
+
+      if (mysqli_stmt_execute($stmt)) {
+        echo '<script>alert("Data has been updated successfully.")</script>';
+        header('location: admission-form.php');
+      } else {
+        echo '<script>alert("Something went wrong. Please try again.")</script>';
+      }
+      mysqli_stmt_close($stmt);
     } else {
       echo '<script>alert("Something went wrong. Please try again.")</script>';
     }
@@ -108,14 +117,14 @@ if (isset($_POST['submit'])) {
           <!-- Content Row -->
           <!-- Edit Applicaton Form Contents  -->
           <div class="row">
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="submit" method="post" enctype="multipart/form-data" class="php-email-form"> <?php
-                                                                                                                                                                    $eid = $_GET['editid'];
-                                                                                                                                                                    $uid = $_SESSION['uid'];
-                                                                                                                                                                    $ret = mysqli_query($conn, "SELECT * FROM tbladmapplications WHERE ID='$eid' && UserId='$uid'");
-                                                                                                                                                                    $cnt = 1;
-                                                                                                                                                                    while ($row = mysqli_fetch_array($ret)) {
+            <form name="submit" method="post" enctype="multipart/form-data" class="php-email-form"> <?php
+                                                                                                    $eid = $_GET['editid'];
+                                                                                                    $uid = $_SESSION['uid'];
+                                                                                                    $ret = mysqli_query($conn, "SELECT * FROM tbladmapplications WHERE ID='$eid' && UserId='$uid'");
+                                                                                                    $cnt = 1;
+                                                                                                    while ($row = mysqli_fetch_array($ret)) {
 
-                                                                                                                                                                    ?>
+                                                                                                    ?>
                 <section class="formatter" id="formatter">
                   <div class="row">
                     <div class="col-12">
@@ -123,16 +132,15 @@ if (isset($_POST['submit'])) {
                         <div class="card-header">
                           <h5 class="card-title">Update Addimission Form</h5>
                           <?php
-                                                                                                                                                                      if (!empty($formError)) {
-                                                                                                                                                                        echo "
+                                                                                                      if (!empty($formError)) {
+                                                                                                        echo "
                               <p class='text-danger m-0 p-0'>*$formError</p>
                               ";
-                                                                                                                                                                      }
+                                                                                                      }
                           ?>
                         </div>
                         <div class="card-content">
                           <div class="card-body">
-
 
                             <div class="row">
                               <div class="col-xl-6 col-lg-12">
@@ -142,7 +150,7 @@ if (isset($_POST['submit'])) {
                                     <select name='coursename' id="coursename" class="form-control white_bg">
                                       <option value="<?php echo $row['CourseApplied']; ?>"><?php echo $row['CourseApplied']; ?></option>
                                       <?php $query = mysqli_query($conn, "SELECT * FROM tblcourse");
-                                                                                                                                                                      while ($row1 = mysqli_fetch_array($query)) {
+                                                                                                      while ($row1 = mysqli_fetch_array($query)) {
                                       ?>
                                         <option value="<?php echo $row1['CourseName']; ?>"><?php echo $row1['CourseName']; ?></option>
                                       <?php } ?>
@@ -166,7 +174,7 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>Father's Name </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="fathername" name="fathername" type="text" required='true' value="<?php echo $row['FatherName']; ?>">
+                                    <input class="form-control white_bg" id="fathername" name="fathername" type="text" maxlength="120" required value="<?php echo $row['FatherName']; ?>">
                                   </div>
                                 </fieldset>
                               </div>
@@ -174,7 +182,7 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>Mother's Name </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="mothername" name="mothername" type="text" required='true' value="<?php echo $row['MotherName']; ?>">
+                                    <input class="form-control white_bg" id="mothername" name="mothername" type="text" required maxlength="120" value="<?php echo $row['MotherName']; ?>">
                                   </div>
                                 </fieldset>
                               </div>
@@ -187,23 +195,20 @@ if (isset($_POST['submit'])) {
                                     <input class="form-control white_bg" id="dob" name="dob" type="date" required='true' value="<?php echo $row['DOB']; ?>">
                                     <small class="text-muted">Must be in this format (MM-DD-YYYY)</small>
                                   </div>
-
                                 </fieldset>
                               </div>
                               <div class="col-xl-4 col-lg-12">
                                 <fieldset>
                                   <h6>Nationality </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="nationality" name="nationality" type="text" required='true' value="<?php echo $row['Nationality']; ?>">
+                                    <input class="form-control white_bg" id="nationality" name="nationality" type="text" maxlength="60" required value="<?php echo $row['Nationality']; ?>">
                                   </div>
-
                                 </fieldset>
                               </div>
                               <div class="col-xl-4 col-lg-12">
                                 <fieldset>
                                   <h6>Gender </h6>
                                   <div class="form-group">
-
                                     <select class="form-control white_bg" id="gender" name="gender" required>
                                       <option value="<?php echo $row['Gender']; ?>"><?php echo $row['Gender']; ?></option>
                                       <option value="Male">Male</option>
@@ -219,7 +224,7 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>Correspondence Address </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="coradd" name="coradd" type="text" required='true' value="<?php echo $row['CorrespondenceAdd']; ?>">
+                                    <input class="form-control white_bg" id="coradd" name="coradd" type="text" maxlength="200" required value="<?php echo $row['CorrespondenceAdd']; ?>">
                                   </div>
                                 </fieldset>
                               </div>
@@ -229,7 +234,7 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>Permanent Address </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="peradd" name="peradd" type="text" required='true' value="<?php echo $row['PermanentAdd']; ?>">
+                                    <input class="form-control white_bg" id="peradd" name="peradd" type="text" maxlength="200" required value="<?php echo $row['PermanentAdd']; ?>">
                                   </div>
                                 </fieldset>
                               </div>
@@ -260,31 +265,31 @@ if (isset($_POST['submit'])) {
                                   </tr>
                                   <tr>
                                     <th>Junior Highschool</th>
-                                    <td> <input class="form-control white_bg" id="10thboard" name="10thboard" placeholder="School" type="text" required='true' value="<?php echo $row['SecondaryBoard']; ?>"></td>
-                                    <td> <input class="form-control white_bg" id="10thpyeaer" name="10thpyear" placeholder="Year" type="number" required='true' value="<?php echo $row['SecondaryBoardyop']; ?>"></td>
+                                    <td> <input class="form-control white_bg" id="10thboard" name="10thboard" placeholder="School" type="text" maxlength="120" required value="<?php echo $row['SecondaryBoard']; ?>"></td>
+                                    <td> <input class="form-control white_bg" id="10thpyeaer" name="10thpyear" placeholder="Year" type="number" min="1950" max="2023" required value="<?php echo $row['SecondaryBoardyop']; ?>"></td>
                                   </tr>
                                   <tr>
                                     <th>Senior Highschool</th>
-                                    <td> <input class="form-control white_bg" id="12thboard" name="12thboard" placeholder="School" type="text" required='true' value="<?php echo $row['SSecondaryBoard']; ?>"></td>
-                                    <td> <input class="form-control white_bg" id="12thboard" name="12thpyear" placeholder="Year" type="number" required='true' value="<?php echo $row['SSecondaryBoardyop']; ?>"></td>
+                                    <td> <input class="form-control white_bg" id="12thboard" name="12thboard" placeholder="School" type="text" maxlength="120" required value="<?php echo $row['SSecondaryBoard']; ?>"></td>
+                                    <td> <input class="form-control white_bg" id="12thboard" name="12thpyear" placeholder="Year" type="number" min="1950" max="2023" required value="<?php echo $row['SSecondaryBoardyop']; ?>"></td>
                                   </tr>
                                   <tr>
                                     <th>Graduation</th>
-                                    <td> <input class="form-control white_bg" id="graduation" name="graduation" placeholder="School" type="text" value="<?php echo $row['GraUni']; ?>"></td>
-                                    <td> <input class="form-control white_bg" id="graduationpyeaer" name="graduationpyeaer" placeholder="Year" type="number" value="<?php echo $row['GraUniyop']; ?>"></td>
+                                    <td> <input class="form-control white_bg" id="graduation" name="graduation" placeholder="School" type="text" maxlength="120" required value="<?php echo $row['GraUni']; ?>"></td>
+                                    <td> <input class="form-control white_bg" id="graduationpyeaer" name="graduationpyeaer" placeholder="Year" type="number" min="1950" max="2023" required value="<?php echo $row['GraUniyop']; ?>"></td>
                                   </tr>
                                   <tr>
                                     <th>Post Graduation</th>
-                                    <td> <input class="form-control white_bg" id="postgraduation" name="postgraduation" placeholder="School" type="text" value="<?php echo $row['PGUni']; ?>"></td>
-                                    <td> <input class="form-control white_bg" id="pgpyeaer" name="pgpyear" placeholder="Year" type="number" value="<?php echo $row['PGUniyop']; ?>"></td>
+                                    <td> <input class="form-control white_bg" id="postgraduation" name="postgraduation" placeholder="School" type="text" maxlength="120" required value="<?php echo $row['PGUni']; ?>"></td>
+                                    <td> <input class="form-control white_bg" id="pgpyeaer" name="pgpyear" placeholder="Year" type="number" min="1950" max="2023" required value="<?php echo $row['PGUniyop']; ?>"></td>
                                   </tr>
                                 </table>
                               </div>
                             </div>
                             </hr>
                           <?php
-                                                                                                                                                                      $cnt = $cnt + 1;
-                                                                                                                                                                    } ?>
+                                                                                                      $cnt = $cnt + 1;
+                                                                                                    } ?>
                           <div class="row" style="margin-top: 2%">
                             <div class="col-xl-6 col-lg-12">
                               <button type="submit" name="submit" class="btn btn-info btn-min-width mr-1 mb-1">Update</button>

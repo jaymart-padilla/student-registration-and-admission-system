@@ -5,6 +5,7 @@ session_start();
 include('../includes/dbconnection.php');
 // check for privilege
 include('includes/access.php');
+
 ?>
 
 <!DOCTYPE html>

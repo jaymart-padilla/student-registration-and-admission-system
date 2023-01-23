@@ -1,6 +1,10 @@
 <?php
 session_start();
+
+// connects db
 include('../includes/dbconnection.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -17,20 +21,27 @@ if (isset($_POST['submit'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     $mobno = $_SESSION['mobilenumber'];
     $email = $_SESSION['email'];
     $newpassword = md5($_POST['newpassword']);
 
-    // update data from db
-    $query = mysqli_query($conn, "UPDATE tbluser SET Password ='$newpassword' WHERE Email='$email' AND MobileNumber = '$mobno'");
+    // Prepare the UPDATE statement
+    $stmt = mysqli_prepare($conn, "UPDATE tbluser SET Password = ? WHERE Email = ? AND MobileNumber = ?");
 
-    if ($query) {
-      echo "<script>alert('Password successfully changed');</script>";
-      session_destroy();
-      header('location: login.php');
+    if ($stmt) {
+      // Bind the parameters
+      mysqli_stmt_bind_param($stmt, "sss", $newpassword, $email, $mobno);
+      if (mysqli_stmt_execute($stmt)) {
+        echo "<script>alert('Password successfully changed');</script>";
+        session_destroy();
+        header('location: login.php');
+      } else {
+        echo "<script>alert('Something went wrong. Please try again.');</script>";
+      }
+      mysqli_stmt_close($stmt);
     }
   }
 }
@@ -95,12 +106,12 @@ if (isset($_POST['submit'])) {
 
       <!-- new password -->
       <div class="input-group mb-3">
-        <input type="password" name="newpassword" id="newpassword" class="form-control" placeholder="New password" aria-label="new password" required />
+        <input type="password" name="newpassword" id="newpassword" class="form-control" placeholder="New password" aria-label="new password" maxlength="60" required />
       </div>
 
       <!-- confirm new password -->
       <div class="input-group mb-3">
-        <input type="password" name="confirmpassword" id="confirmpassword" class="form-control" placeholder="Confirm new password" aria-label="confirm new password" required />
+        <input type="password" name="confirmpassword" id="confirmpassword" class="form-control" placeholder="Confirm new password" aria-label="confirm new password" maxlength="60" required />
       </div>
 
       <?php

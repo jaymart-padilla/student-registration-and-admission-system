@@ -31,11 +31,22 @@ if (isset($_POST['submit'])) {
       $userpic = md5($upic) . $extension;
       move_uploaded_file($_FILES["userpic"]["tmp_name"], "userimages/" . $userpic);
 
-      // updates data from db
-      $query = mysqli_query($conn, "UPDATE tbladmapplications SET UserPic='$userpic' WHERE ID='$eid' && UserId='$uid'");
-      if ($query) {
-        echo '<script>alert("Profile image updated successfully.")</script>';
-        header('location: admission-form.php');
+      // Prepare the UPDATE statement
+      $stmt = mysqli_prepare($conn, "UPDATE tbladmapplications SET UserPic=? WHERE ID=? AND UserId=?");
+
+      if ($stmt) {
+        // Bind the parameters
+        mysqli_stmt_bind_param($stmt, "sss", $userpic, $eid, $uid);
+
+        // Execute the statement
+        if (mysqli_stmt_execute($stmt)) {
+          echo '<script>alert("Profile image updated successfully.")</script>';
+          header('location: admission-form.php');
+        } else {
+          echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+        }
+        // Close the prepared statement
+        mysqli_stmt_close($stmt);
       } else {
         echo '<script>alert("Something Went Wrong. Please try again.")</script>';
       }
@@ -95,7 +106,7 @@ if (isset($_POST['submit'])) {
           <!-- Content Row -->
           <!-- Change Image Form Contents  -->
           <div class="row">
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="submit" method="post" enctype="multipart/form-data" class="php-email-form">
+            <form name="submit" method="post" enctype="multipart/form-data" class="php-email-form">
               <?php
               $eid = $_GET['editid'];
               $uid = $_SESSION['uid'];
@@ -122,7 +133,6 @@ if (isset($_POST['submit'])) {
                           <div class="card-body">
 
                             <div class="row">
-
                               <div class="col-xl-6 col-lg-12">
                                 <fieldset>
                                   <h6>New Student Photo </h6>

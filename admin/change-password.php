@@ -20,17 +20,28 @@ if (isset($_POST['submit'])) {
 
   // if no empty values
   if (empty($formError)) {
-    $cpassword = md5($_POST['currentpassword']);
-    $newpassword = md5($_POST['newpassword']);
+    $currentPassword = md5($_POST['currentpassword']);
+    $newPassword = md5($_POST['newpassword']);
     // check for match
-    $query = mysqli_query($conn, "SELECT ID FROM tbluser WHERE ID='$admid' AND Password='$cpassword' AND Privilege = 'admin'");
+    $query = mysqli_query($conn, "SELECT ID FROM tbluser WHERE ID='$admid' AND Password='$currentPassword' AND Privilege = 'admin'");
     $row = mysqli_fetch_array($query);
     if ($row > 0) {
-      // update data from db
-      $ret = mysqli_query($conn, "UPDATE tbluser SET Password='$newpassword' WHERE ID='$admid' AND Privilege = 'admin'");
-      echo '<script>alert("Your password successully changed.")</script>';
-    } else {
+      // Prepare the UPDATE statement
+      $stmt = mysqli_prepare($conn, "UPDATE tbluser SET Password = ? WHERE ID = ? AND Privilege = 'admin'");
 
+      if ($stmt) {
+        // Bind the parameters
+        mysqli_stmt_bind_param($stmt, "si", $newPassword, $admid);
+
+        if (mysqli_stmt_execute($stmt)) {
+        } else {
+          echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+        }
+
+        // Close the statement
+        mysqli_stmt_close($stmt);
+      }
+    } else {
       echo '<script>alert("Your current password is wrong.")</script>';
     }
   }
@@ -131,11 +142,9 @@ if (isset($_POST['submit'])) {
                             <div class="col-xl-6 col-lg-12">
                               <fieldset>
                                 <h6>Current Password
-
                                 </h6>
                                 <div class="form-group">
-
-                                  <input class="form-control white_bg" id="currentpassword" name="currentpassword" type="password" required="true">
+                                  <input class="form-control white_bg" id="currentpassword" name="currentpassword" type="password" maxlength="60" required="true">
                                 </div>
                               </fieldset>
 
@@ -150,7 +159,7 @@ if (isset($_POST['submit'])) {
                                 </h6>
                                 <div class="form-group">
 
-                                  <input class="form-control white_bg" id="newpassword" type="password" name="newpassword" required="true">
+                                  <input class="form-control white_bg" id="newpassword" type="password" name="newpassword" maxlength="60" required="true">
                                 </div>
                               </fieldset>
                             </div>
@@ -163,7 +172,7 @@ if (isset($_POST['submit'])) {
 
                                 </h6>
                                 <div class="form-group">
-                                  <input class="form-control white_bg" id="confirmpassword" type="password" name="confirmpassword" required="true">
+                                  <input class="form-control white_bg" id="confirmpassword" type="password" name="confirmpassword" maxlength="60" required="true">
                                 </div>
                               </fieldset>
                             </div>

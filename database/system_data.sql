@@ -1,4 +1,5 @@
 -- Database: `system_data`
+
 SET time_zone = "+00:00";
 
 -- TABLES
@@ -9,7 +10,7 @@ CREATE TABLE `tbluser` (
   `FirstName` varchar(45) NOT NULL,
   `LastName` varchar(45) NOT NULL,
   `MobileNumber` int(10) NOT NULL,
-  `Email` varchar(60) NOT NULL,
+  `Email` varchar(40) NOT NULL,
   `Password` varchar(60) NOT NULL,
   `Privilege` varchar(20) NOT NULL,
   `CreatedAt` timestamp NULL DEFAULT current_timestamp()
@@ -31,16 +32,16 @@ CREATE TABLE `tbladmapplications` (
   `DOB` date DEFAULT NULL,
   `Nationality` varchar(60) DEFAULT NULL,
   `Gender` varchar(20) DEFAULT NULL,
-  `CorrespondenceAdd` varchar(350) NOT NULL,
+  `CorrespondenceAdd` varchar(200) NOT NULL,
   `PermanentAdd` varchar(200) NOT NULL,
   `SecondaryBoard` varchar(120) DEFAULT NULL,
-  `SecondaryBoardyop` varchar(120) DEFAULT NULL,
+  `SecondaryBoardyop` int(4) DEFAULT NULL,
   `SSecondaryBoard` varchar(120) DEFAULT NULL,
-  `SSecondaryBoardyop` varchar(120) DEFAULT NULL,
+  `SSecondaryBoardyop` int(4) DEFAULT NULL,
   `GraUni` varchar(120) DEFAULT NULL,
-  `GraUniyop` varchar(120) DEFAULT NULL,
+  `GraUniyop` int(4) DEFAULT NULL,
   `PGUni` varchar(120) DEFAULT NULL,
-  `PGUniyop` varchar(120) DEFAULT NULL,
+  `PGUniyop` int(4) DEFAULT NULL,
   `CourseApplieddate` timestamp NOT NULL DEFAULT current_timestamp(),
   `AdminRemark` varchar(255) DEFAULT NULL,
   `AdminStatus` varchar(20) DEFAULT NULL,
@@ -48,6 +49,15 @@ CREATE TABLE `tbladmapplications` (
   `UserPic` varchar(200) DEFAULT NULL,
   `ProfRes` varchar(200) DEFAULT NULL
 );
+
+-- tbladmapplication foreign key
+ALTER TABLE `tbladmapplications`
+MODIFY UserId INT NOT NULL;
+
+ALTER TABLE `tbladmapplications`
+ADD FOREIGN KEY (UserId)
+REFERENCES tbluser(ID);
+
 
 
 -- insert default values to tbluser

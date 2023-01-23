@@ -3,6 +3,8 @@ session_start();
 
 // connect to the db
 include('../includes/dbconnection.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -19,20 +21,35 @@ if (isset($_POST['login'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     $emailcon = $_POST['emailcont'];
     $password = md5($_POST['password']);
-    // check for matches based from input
-    $query = mysqli_query($conn, "SELECT ID FROM tbluser WHERE (Email='$emailcon' || MobileNumber='$emailcon') AND Password='$password' AND Privilege = 'student'");
-    $ret = mysqli_fetch_array($query);
-    if ($ret > 0) {
-      $_SESSION['uid'] = $ret['ID'];
-      $_SESSION['id'] = $ret['ID'];
-      echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-    } else {
-      echo "<script>alert('Invalid Details');</script>";
+
+    // Prepare the SELECT statement
+    $stmtSelect = mysqli_prepare($conn, "SELECT ID FROM tbluser WHERE (Email=? OR MobileNumber=?) AND Password=? AND Privilege = 'student'");
+
+    if ($stmtSelect) {
+      // Bind the parameters
+      mysqli_stmt_bind_param($stmtSelect, "sss", $emailcon, $emailcon, $password);
+      // Execute the SELECT statement
+      mysqli_stmt_execute($stmtSelect);
+      // Bind the result
+      mysqli_stmt_bind_result($stmtSelect, $result);
+      // Fetch the result
+      mysqli_stmt_fetch($stmtSelect);
+
+      if ($result) {
+        $_SESSION['uid'] = $result;
+        $_SESSION['id'] = $result;
+        echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+      } else {
+        echo "<script>alert('Invalid Details');</script>";
+      }
+
+      // Close the statement
+      mysqli_stmt_close($stmtSelect);
     }
   }
 }
@@ -82,12 +99,12 @@ if (isset($_POST['login'])) {
 
       <!-- email | contact no. -->
       <div class="input-group mb-3">
-        <input type="text" name="emailcont" id="email" class="form-control" placeholder="Email or Contact number" aria-label="Email | Contact number" required />
+        <input type="text" name="emailcont" id="email" class="form-control" placeholder="Email or Contact number" aria-label="Email | Contact number" maxlength="40" required />
       </div>
 
       <!-- password -->
       <div class="input-group mb-3">
-        <input type="password" name="password" id="password" class="form-control" placeholder="Password" aria-label="Password" required />
+        <input type="password" name="password" id="password" class="form-control" placeholder="Password" aria-label="Password" maxlength="60" required />
       </div>
 
       <!-- submit -->

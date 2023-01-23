@@ -14,7 +14,7 @@ if (isset($_POST['submit'])) {
   $profres = $_FILES["profres"]["name"];
 
   // check for empty value
-  if (empty($upic)) {
+  if (empty($profres)) {
     $formError = "Proof of Residence(photo) is required";
   }
 
@@ -30,13 +30,19 @@ if (isset($_POST['submit'])) {
       // rename user photo
       $profrespic = md5($profres) . $pextension;
       move_uploaded_file($_FILES["profres"]["tmp_name"], "prof_of_res/" . $profrespic);
-      // updates data from db
-      $query = mysqli_query($conn, "UPDATE tbladmapplications SET ProfRes='$profrespic' WHERE ID='$eid' && UserId='$uid'");
-      if ($query) {
-        echo '<script>alert("Profile image updated successfully.")</script>';
-        header('location: admission-form.php');
-      } else {
-        echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+
+      // Prepare the UPDATE statement
+      $stmt = mysqli_prepare($conn, "UPDATE tbladmapplications SET ProfRes=? WHERE ID=? AND UserId=?");
+      if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "sis", $profrespic, $eid, $uid);
+
+        if (mysqli_stmt_execute($stmt)) {
+          echo '<script>alert("Profile image updated successfully.")</script>';
+          header('location: admission-form.php');
+        } else {
+          echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+        }
+        mysqli_stmt_close($stmt);
       }
     }
   }
@@ -93,7 +99,7 @@ if (isset($_POST['submit'])) {
           <!-- Content Row -->
           <!-- Change Image Form Contents  -->
           <div class="row">
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="submit" method="post" enctype="multipart/form-data" class="php-email-form">
+            <form name="submit" method="post" enctype="multipart/form-data" class="php-email-form">
               <?php
               $eid = $_GET['editid'];
               $uid = $_SESSION['uid'];

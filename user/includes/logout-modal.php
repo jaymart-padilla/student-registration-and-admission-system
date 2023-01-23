@@ -8,7 +8,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p><strong>Hope you like the website!</strong></p>
+        <p><strong>Hope you like our website!</strong></p>
         <p>Select <strong>"Logout"</strong> below to end your session.</p>
       </div>
       <div class="modal-footer">

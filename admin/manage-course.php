@@ -1,7 +1,9 @@
 <?php
 session_start();
 
+// connects to db
 include('../includes/dbconnection.php');
+// checks for privilege
 include('includes/access.php');
 
 //code for deletion

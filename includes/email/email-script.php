@@ -2,6 +2,8 @@
 
 // connect db
 include_once('/xampp/htdocs/projects/student_registration_system/includes/dbconnection.php');
+// form filter
+include('../error/filter-input.php');
 
 // Use the PHPMailer library
 use PHPMailer\PHPMailer\PHPMailer;
@@ -20,7 +22,7 @@ $toEmail = $admin['Email'];
 // XXS Protection
 // filters all post data 
 foreach ($_POST as $key => $value) {
-  $_POST[$key] = htmlspecialchars($value);
+  $_POST[$key] = filterInput($conn, $value);
 }
 
 // Get the filtered user's name, email, subject, and message from the form submission

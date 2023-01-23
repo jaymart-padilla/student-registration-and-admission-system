@@ -5,6 +5,8 @@ session_start();
 include('../includes/dbconnection.php');
 // check for privilege
 include('includes/access.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -29,7 +31,7 @@ if (isset($_POST['submit'])) {
     $whitelist = ['upic', 'profres'];
     $data = array_diff_key($_POST, array_flip($whitelist));
     foreach ($data as $key => $value) {
-      $data[$key] = htmlspecialchars($value);
+      $data[$key] = filterInput($conn, $value);
     }
 
     $coursename = $data['coursename'];
@@ -63,14 +65,21 @@ if (isset($_POST['submit'])) {
       move_uploaded_file($_FILES["userpic"]["tmp_name"], "userimages/" . $userpic);
       move_uploaded_file($_FILES["profres"]["tmp_name"], "prof_of_res/" . $profrespic);
 
-      // insert data from db
-      $query = mysqli_query($conn, "INSERT INTO tbladmapplications(UserId,CourseApplied,FatherName,MotherName,DOB,Nationality,Gender,CorrespondenceAdd,PermanentAdd,SecondaryBoard,SecondaryBoardyop,SSecondaryBoard,SSecondaryBoardyop,GraUni,GraUniyop,PGUni,PGUniyop,UserPic,ProfRes) VALUE ('$uid','$coursename','$fathername','$mothername','$dob','$nationality','$gender','$coradd','$peradd','$secboard','$secyop','$ssecboard','$ssecyop','$grauni','$grayop','$pguni','$pgyop','$userpic', '$profrespic')");
-      if ($query) {
-        echo '<script>alert("Data has been added successfully.")</script>';
-        echo "<script>window.location.href ='admission-form.php'</script>";
-      } else {
-        echo '<script>alert("Something Went Wrong. Please try again.")</script>';
-        echo "<script>window.location.href ='admission-form.php'</script>";
+      // Prepare the INSERT statement
+      $stmt = mysqli_prepare($conn, "INSERT INTO tbladmapplications(UserId,CourseApplied,FatherName,MotherName,DOB,Nationality,Gender,CorrespondenceAdd,PermanentAdd,SecondaryBoard,SecondaryBoardyop,SSecondaryBoard,SSecondaryBoardyop,GraUni,GraUniyop,PGUni,PGUniyop,UserPic,ProfRes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+      if ($stmt) {
+        // Bind the parameters
+        mysqli_stmt_bind_param($stmt, "sssssssssssssssssss", $uid, $coursename, $fathername, $mothername, $dob, $nationality, $gender, $coradd, $peradd, $secboard, $secyop, $ssecboard, $ssecyop, $grauni, $grayop, $pguni, $pgyop, $userpic, $profrespic);
+        if (mysqli_stmt_execute($stmt)) {
+          echo '<script>alert("Data has been added successfully.")</script>';
+          echo "<script>window.location.href ='admission-form.php'</script>";
+        } else {
+          echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+          echo "<script>window.location.href ='admission-form.php'</script>";
+        }
+
+        mysqli_stmt_close($stmt);
       }
     }
   }
@@ -302,7 +311,7 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>Father's Name </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="fathername" name="fathername" type="text" required>
+                                    <input class="form-control white_bg" id="fathername" name="fathername" type="text" maxlength="120" required>
                                   </div>
                                 </fieldset>
                               </div>
@@ -310,7 +319,7 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>Mother's Name </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="mothername" name="mothername" type="text" required>
+                                    <input class="form-control white_bg" id="mothername" name="mothername" type="text" maxlength="120" required>
                                   </div>
                                 </fieldset>
                               </div>
@@ -328,18 +337,16 @@ if (isset($_POST['submit'])) {
                               </div>
                               <div class="col-xl-4 col-lg-12">
                                 <fieldset>
-                                  <h6>Nationality </h6>
+                                  <h6>Nationality</h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="nationality" name="nationality" type="text" required>
+                                    <input class="form-control white_bg" id="nationality" name="nationality" type="text" maxlength="60" required>
                                   </div>
-
                                 </fieldset>
                               </div>
                               <div class="col-xl-4 col-lg-12">
                                 <fieldset>
-                                  <h6>Gender </h6>
+                                  <h6>Gender</h6>
                                   <div class="form-group">
-
                                     <select class="form-control white_bg" id="gender" name="gender" required>
                                       <option value="">Select</option>
                                       <option value="Male">Male</option>
@@ -355,7 +362,7 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>Correspondence Address </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="coradd" name="coradd" type="text" required>
+                                    <input class="form-control white_bg" id="coradd" name="coradd" type="text" maxlength="200" required>
                                   </div>
                                 </fieldset>
                               </div>
@@ -365,7 +372,7 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>Permanent Address </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="peradd" name="peradd" type="text" required>
+                                    <input class="form-control white_bg" id="peradd" name="peradd" type="text" maxlength="200" required>
                                   </div>
                                 </fieldset>
                               </div>
@@ -396,23 +403,23 @@ if (isset($_POST['submit'])) {
                                   </tr>
                                   <tr>
                                     <th>Junior Highschool</th>
-                                    <td> <input class="form-control white_bg" id="10thboard" name="10thboard" placeholder="School" type="text" required></td>
-                                    <td> <input class="form-control white_bg" id="10thpyeaer" name="10thpyear" placeholder="Year" type="number" required></td>
+                                    <td> <input class="form-control white_bg" id="10thboard" name="10thboard" placeholder="School" type="text" maxlength="120" required></td>
+                                    <td> <input class="form-control white_bg" id="10thpyeaer" name="10thpyear" placeholder="Year" type="number" min="1950" max="2023" required></td>
                                   </tr>
                                   <tr>
                                     <th>Senior Highschool</th>
-                                    <td> <input class="form-control white_bg" id="12thboard" name="12thboard" placeholder="School" type="text" required></td>
-                                    <td> <input class="form-control white_bg" id="12thboard" name="12thpyear" placeholder="Year" type="number" required></td>
+                                    <td> <input class="form-control white_bg" id="12thboard" name="12thboard" placeholder="School" type="text" maxlength="120" required></td>
+                                    <td> <input class="form-control white_bg" id="12thboard" name="12thpyear" placeholder="Year" type="number" min="1950" max="2023" required></td>
                                   </tr>
                                   <tr>
                                     <th>Graduation</th>
-                                    <td> <input class="form-control white_bg" id="graduation" name="graduation" placeholder="School" type="text" required></td>
-                                    <td> <input class="form-control white_bg" id="graduationpyeaer" name="graduationpyeaer" placeholder="Year" type="number" required></td>
+                                    <td> <input class="form-control white_bg" id="graduation" name="graduation" placeholder="School" type="text" maxlength="120" required></td>
+                                    <td> <input class="form-control white_bg" id="graduationpyeaer" name="graduationpyeaer" placeholder="Year" type="number" min="1950" max="2023" required></td>
                                   </tr>
                                   <tr>
                                     <th>Post Graduation</th>
-                                    <td> <input class="form-control white_bg" id="postgraduation" name="postgraduation" placeholder="School" type="text" required></td>
-                                    <td> <input class="form-control white_bg" id="pgpyeaer" name="pgpyear" placeholder="Year" type="number" required></td>
+                                    <td> <input class="form-control white_bg" id="postgraduation" name="postgraduation" placeholder="School" type="text" maxlength="120" required></td>
+                                    <td> <input class="form-control white_bg" id="pgpyeaer" name="pgpyear" placeholder="Year" type="number" min="1950" max="2023" required></td>
                                   </tr>
                                 </table>
                               </div>

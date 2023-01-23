@@ -3,6 +3,8 @@ session_start();
 
 // connects to db
 include('../includes/dbconnection.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -19,21 +21,35 @@ if (isset($_POST['submit'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     $mobno = $_POST['mobilenumber'];
     $email = $_POST['email'];
 
-    // check for matches based from input
-    $query = mysqli_query($conn, "SELECT ID FROM tbluser WHERE Email='$email' AND MobileNumber ='$mobno' Privilege = 'student'");
-    $ret = mysqli_fetch_array($query);
-    if ($ret > 0) {
-      $_SESSION['mobilenumber'] = $mobno;
-      $_SESSION['email'] = $email;
-      echo "<script type='text/javascript'> document.location ='reset-password.php'; </script>";
-    } else {
-      echo "<script>alert('Invalid Details. Please try again.');</script>";
+    // Prepare the SELECT statement
+    $stmt = mysqli_prepare($conn, "SELECT ID FROM tbluser WHERE Email=? AND MobileNumber =? AND Privilege = 'student'");
+
+    if ($stmt) {
+      // Bind the parameters
+      mysqli_stmt_bind_param($stmt, "ss", $email, $mobno);
+      // Execute the statement
+      if (mysqli_stmt_execute($stmt)) {
+        // Bind the result
+        mysqli_stmt_bind_result($stmt, $result);
+        // Fetch the result
+        mysqli_stmt_fetch($stmt);
+
+        if ($result) {
+          $_SESSION['mobilenumber'] = $mobno;
+          $_SESSION['email'] = $email;
+          echo "<script type='text/javascript'> document.location ='reset-password.php'; </script>";
+        } else {
+          echo "<script>alert('Invalid Details. Please try again.');</script>";
+        }
+      }
+      // Close the statement
+      mysqli_stmt_close($stmt);
     }
   }
 }
@@ -84,12 +100,12 @@ if (isset($_POST['submit'])) {
 
       <!-- email -->
       <div class="input-group mb-3">
-        <input type="email" name="email" id="email" class="form-control" placeholder="Email address" aria-label="email" required />
+        <input type="email" name="email" id="email" class="form-control" placeholder="Email address" aria-label="email" maxlength="40" required />
       </div>
 
       <!-- tel -->
       <div class="input-group mb-3">
-        <input type="tel" name="mobilenumber" id="mobilenumber" class="form-control" placeholder="Contact number" aria-label="contact number" required />
+        <input type="number" name="mobilenumber" id="mobilenumber" class="form-control" placeholder="Contact number - Format: 9876543210" aria-label="contact number" pattern="[0-9]{10}" required />
       </div>
 
       <?php

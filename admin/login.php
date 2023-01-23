@@ -1,7 +1,10 @@
 <?php
 session_start();
 
+// connects db
 include('../includes/dbconnection.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -18,22 +21,34 @@ if (isset($_POST['login'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     $adminEmail = $_POST['email'];
     $password = md5($_POST['password']);
 
-    // check if match
-    $query = mysqli_query($conn, "SELECT ID FROM tbluser WHERE Email='$adminEmail' AND Password='$password'");
-    $ret = mysqli_fetch_array($query);
-    if ($ret > 0) {
-      $_SESSION['aid'] = $ret['ID'];
-      $_SESSION['id'] = $ret['ID'];
-      echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
-    } else {
-      echo "<script>alert('Invalid Details');</script>";
-      echo "<script type='text/javascript'> document.location ='login.php'; </script>";
+    // Prepare the SELECT statement
+    $stmtSelect = mysqli_prepare($conn, "SELECT ID FROM tbluser WHERE Email = ? AND Password = ? AND Privilege = 'admin'");
+
+    if ($stmtSelect) {
+      // Bind the parameters
+      mysqli_stmt_bind_param($stmtSelect, "ss", $adminEmail, $password);
+      // Execute the SELECT statement
+      mysqli_stmt_execute($stmtSelect);
+      // Bind the result
+      mysqli_stmt_bind_result($stmtSelect, $result);
+      // Fetch the result
+      mysqli_stmt_fetch($stmtSelect);
+
+      if ($result) {
+        $_SESSION['aid'] = $result;
+        $_SESSION['id'] = $result;
+        echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
+      } else {
+        echo "<script>alert('Invalid Details');</script>";
+        echo "<script type='text/javascript'> document.location ='login.php'; </script>";
+      }
+      mysqli_stmt_close($stmtSelect);
     }
   }
 }
@@ -81,12 +96,12 @@ if (isset($_POST['login'])) {
 
       <!-- email -->
       <div class="input-group mb-3">
-        <input type="email" name="email" id="email" class="form-control" placeholder="Email" aria-label="email" required />
+        <input type="email" name="email" id="email" class="form-control" placeholder="Email" aria-label="email" maxlength="40" required />
       </div>
 
       <!-- password -->
       <div class="input-group mb-3">
-        <input type="password" name="password" id="password" class="form-control" placeholder="Password" aria-label="Password" required />
+        <input type="password" name="password" id="password" class="form-control" placeholder="Password" aria-label="Password" maxlength="60" required />
       </div>
 
       <?php

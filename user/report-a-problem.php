@@ -51,7 +51,7 @@ include('includes/access.php');
         <div class="container-fluid px-4">
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+            <h1 class="h3 mb-0 text-gray-800">Report a Problem</h1>
           </div>
 
           <!-- Content Row -->
@@ -70,20 +70,20 @@ include('includes/access.php');
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label for="name">Your Name</label>
-                    <input type="text" name="name" class="form-control" id="name" required readonly='true' value="<?php echo $row['FirstName'] . ' ' . $row['LastName']; ?>">
+                    <input type="text" name="name" class="form-control" id="name" required readonly='true' maxlength="90" value="<?php echo $row['FirstName'] . ' ' . $row['LastName']; ?>">
                   </div>
                   <div class="form-group col-md-6">
                     <label for="name">Your Email</label>
-                    <input type="email" class="form-control" name="email" id="email" required readonly='true' value="<?php echo $row['Email']; ?>" />
+                    <input type="email" class="form-control" name="email" id="email" required readonly='true' maxlength="40" value="<?php echo $row['Email']; ?>" />
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="name">Subject</label>
-                  <input type="text" class="form-control" name="subject" id="subject" required>
+                  <input type="text" class="form-control" name="subject" id="subject" maxlength="120" required>
                 </div>
                 <div class="form-group">
                   <label for="name">Message</label>
-                  <textarea class="form-control" name="message" rows="10" required></textarea>
+                  <textarea class="form-control" name="message" rows="10" maxlength="650" required></textarea>
                 </div>
               <?php } ?>
               <div class="text-center">

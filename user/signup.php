@@ -3,6 +3,8 @@ session_start();
 
 // connect db
 include('../includes/dbconnection.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 // Select the email for the admin with ID of 1 (Head Admin)
 $query = "SELECT Email FROM tbluser WHERE Privilege='admin' AND ID = 1";
@@ -37,7 +39,7 @@ if (isset($_POST['submit'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     // for email and contact no. duplication alert
@@ -50,57 +52,63 @@ if (isset($_POST['submit'])) {
     $_SESSION['email'] = $email;
     $_SESSION['password'] = md5($_POST['password']);
 
-    $ret = mysqli_query($conn, "SELECT Email FROM tbluser WHERE (Email='$email' OR MobileNumber='$contno')");
-    $result = mysqli_fetch_array($ret);
-    // if has email or contact already used, deny the registration | otherwise send an email verification code
-    if ($result > 0) {
-      echo "<script>alert('This email or Contact Number already associated with another account');</script>";
-    } else {
-      // create a session for random otp code
-      $otp = rand(100000, 999999);
-      $_SESSION['otp'] = $otp;
+    $stmt = mysqli_prepare($conn, "SELECT Email FROM tbluser WHERE (Email=? OR MobileNumber=?)");
+    if ($stmt) {
+      mysqli_stmt_bind_param($stmt, "ss", $email, $contno);
+      if (mysqli_stmt_execute($stmt)) {
+        $result = mysqli_stmt_get_result($stmt);
+        if (mysqli_num_rows($result) > 0) {
+          echo "<script>alert('This email or Contact Number already associated with another account');</script>";
+        } else {
+          // create a session for random otp code
+          $otp = rand(100000, 999999);
+          $_SESSION['otp'] = $otp;
 
-      //Create an instance; passing `true` enables exceptions
-      $mail = new PHPMailer(true);
+          //Create an instance; passing `true` enables exceptions
+          $mail = new PHPMailer(true);
 
-      // Set up the SMTP server
-      $mail->isSMTP();
-      $mail->SMTPAuth = true;
-      $mail->Host = "smtp.gmail.com";
-      $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-      $mail->Port = 587;
+          // Set up the SMTP server
+          $mail->isSMTP();
+          $mail->SMTPAuth = true;
+          $mail->Host = "smtp.gmail.com";
+          $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+          $mail->Port = 587;
 
-      // Authenticate with the SMTP server using the admin's email and password
-      $mail->Username = $senderEmail;
-      $mail->Password = "mdogemswrqerhfmb";
+          // Authenticate with the SMTP server using the admin's email and password
+          $mail->Username = $senderEmail;
+          $mail->Password = "mdogemswrqerhfmb";
 
-      // Set the sender and recipient of the email
-      $mail->setFrom($senderEmail, 'OTP Verification');
-      $mail->addAddress($email);
+          // Set the sender and recipient of the email
+          $mail->setFrom($senderEmail, 'OTP Verification');
+          $mail->addAddress($email);
 
-      // Set the subject and body of the email
-      $mail->isHTML(true);
-      $mail->Subject =
-        "Your verify code";
-      $mail->Body =
-        "<p>Dear user, </p> <h3>Your verify OTP code is $otp <br></h3>";
+          // Set the subject and body of the email
+          $mail->isHTML(true);
+          $mail->Subject =
+            "Your verify code";
+          $mail->Body =
+            "<p>Dear user, </p> <h3>Your verify OTP code is $otp <br></h3>";
 
-      // Send the email and check if it was sent successfully
-      if (!$mail->send()) {
+          // Send the email and check if it was sent successfully
+          if (!$mail->send()) {
 ?>
-        <script>
-          alert("<?php echo "Register Failed, Invalid Email " ?>");
-          window.location.replace('signup.php');
-        </script>
-      <?php
-      } else {
-      ?>
-        <script>
-          alert("<?php echo "Register Successfully, OTP sent to " . $email ?>");
-          window.location.replace('verify-otp.php');
-        </script>
+            <script>
+              alert("<?php echo "Register Failed, Invalid Email " ?>");
+              window.location.replace('signup.php');
+            </script>
+          <?php
+          } else {
+          ?>
+            <script>
+              window.location.replace('verify-otp.php');
+            </script>
 <?php
+          }
+        }
       }
+
+      // close the statement
+      mysqli_stmt_close($stmt);
     }
   }
 }
@@ -161,28 +169,28 @@ if (isset($_POST['submit'])) {
 
       <!-- name -->
       <div class="input-group mb-3">
-        <input type="text" name="firstname" id="firstname" class="form-control" placeholder="First Name" aria-label="firstname" required />
-        <input type="text" name="lastname" id="lastname" class="form-control" placeholder="Last Name" aria-label="lastname" required />
+        <input type="text" name="firstname" id="firstname" class="form-control" placeholder="First Name" aria-label="firstname" maxlength="45" required />
+        <input type="text" name="lastname" id="lastname" class="form-control" placeholder="Last Name" aria-label="lastname" maxlength="45" required />
       </div>
 
       <!-- contact no. -->
       <div class="input-group mb-3">
-        <input type="tel" name="contactno" id="contactno" class="form-control" placeholder="Contact number" aria-label="Contact number" maxlength="10" required />
+        <input type="tel" name="contactno" id="contactno" class="form-control" placeholder="Contact number - Format: 9876543210" aria-label="Contact number" pattern="[0-9]{10}" required />
       </div>
 
       <!-- email -->
       <div class="input-group mb-3">
-        <input type="email" name="email" id="email" class="form-control" placeholder="Email" aria-label="Email" required />
+        <input type="email" name="email" id="email" class="form-control" placeholder="Email" aria-label="Email" maxlength="40" required />
       </div>
 
       <!-- password -->
       <div class="input-group mb-3">
-        <input type="password" name="password" id="password" class="form-control" placeholder="Password" aria-label="Password" required />
+        <input type="password" name="password" id="password" class="form-control" placeholder="Password" aria-label="Password" maxlength="60" required />
       </div>
 
       <!-- repeat password -->
       <div class="input-group mb-3">
-        <input type="password" name="repeatpassword" id="repeatpassword" class="form-control" placeholder="Repeat password" aria-label="repeat-password" required />
+        <input type="password" name="repeatpassword" id="repeatpassword" class="form-control" placeholder="Repeat password" aria-label="repeat-password" maxlength="60" required />
       </div>
 
       <?php

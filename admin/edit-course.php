@@ -1,8 +1,12 @@
 <?php
 session_start();
 
+// connects db
 include('../includes/dbconnection.php');
+// checks for privilege
 include('includes/access.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -21,18 +25,25 @@ if (isset($_POST['submit'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     $coursename = $_POST['coursename'];
 
-    // update data from db
-    $query = mysqli_query($conn, "UPDATE tblcourse SET CourseName = '$coursename' WHERE ID=$eid");
-    if ($query) {
-      echo '<script>alert("Course has been Update.")</script>';
-      header('location: manage-course.php');
-    } else {
-      echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+    // Prepare the UPDATE statement
+    $stmt = mysqli_prepare($conn, "UPDATE tblcourse SET CourseName = ? WHERE ID = ?");
+
+    if ($stmt) {
+      // Bind the parameters
+      mysqli_stmt_bind_param($stmt, "si", $coursename, $eid);
+
+      if (mysqli_stmt_execute($stmt)) {
+        echo '<script>alert("Course has been Update.")</script>';
+        header('location: manage-course.php');
+      } else {
+        echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+      }
+      mysqli_stmt_close($stmt);
     }
   }
 }
@@ -91,7 +102,7 @@ if (isset($_POST['submit'])) {
             <!-- Input Mask start -->
 
             <!-- Formatter start -->
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="course" method="post" class="php-email-form">
+            <form name="course" method="post" class="php-email-form">
               <section class="formatter" id="formatter">
                 <div class="row">
                   <div class="col-12">
@@ -119,11 +130,9 @@ if (isset($_POST['submit'])) {
                               <div class="col-xl-6 col-lg-12">
                                 <fieldset>
                                   <h6>Course Name
-
                                   </h6>
                                   <div class="form-group">
-
-                                    <input class="form-control white_bg" id="coursename" type="text" name="coursename" required value="<?php echo $row['CourseName']; ?>">
+                                    <input class="form-control white_bg" id="coursename" type="text" name="coursename" maxlength="90" required value="<?php echo $row['CourseName']; ?>">
                                   </div>
                                 </fieldset>
                               </div>

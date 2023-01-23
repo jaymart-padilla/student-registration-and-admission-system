@@ -33,7 +33,7 @@
           <h2>A website we created for Web System 101 project</h2>
           <div class="d-flex justify-content-center justify-content-lg-start">
             <a href="user/signup.php" class="btn-get-started scrollto">Sign up</a>
-            <a href="user/login.php" class="btn-watch-video"><span>Login</span></a>
+            <a href="admin/login.php" class="btn-watch-video"><span>Login</span></a>
           </div>
         </div>
         <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-in" data-aos-delay="200">
@@ -298,20 +298,20 @@
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="name">Your Name</label>
-                  <input type="text" name="name" class="form-control" id="name" required>
+                  <input type="text" name="name" class="form-control" id="name" maxlength="90" required>
                 </div>
                 <div class="form-group col-md-6">
                   <label for="name">Your Email</label>
-                  <input type="email" class="form-control" name="email" id="email" required />
+                  <input type="email" class="form-control" name="email" id="email" maxlength="40" required />
                 </div>
               </div>
               <div class="form-group">
                 <label for="name">Subject</label>
-                <input type="text" class="form-control" name="subject" id="subject" required>
+                <input type="text" class="form-control" name="subject" id="subject" maxlength="100" required>
               </div>
               <div class="form-group">
                 <label for="name">Message</label>
-                <textarea class="form-control" name="message" rows="10" required></textarea>
+                <textarea class="form-control" name="message" rows="10" maxlength="650" required></textarea>
               </div>
               <div class="my-3">
                 <div class="loading">Loading</div>

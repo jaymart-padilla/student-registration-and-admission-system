@@ -92,11 +92,14 @@ include('includes/access.php');
 
                     <td><?php echo "Not Updated Yet"; ?></td>
                   <?php }
-                  if ($row['AdminStatus'] == "1") { ?> <td><?php echo "Selected"; ?></td>
+                  if ($row['AdminStatus'] == "1") { ?>
+                    <td><?php echo "Selected"; ?></td>
                   <?php }
                   if ($row['AdminStatus'] == "2") { ?>
-                    <td><?php echo "Rejected"; ?>
-                    </td>
+                    <td><?php echo "Rejected"; ?></td>
+                  <?php }
+                  if ($row['AdminStatus'] == "3") { ?>
+                    <td><?php echo "On hold"; ?></td>
                   <?php } ?>
                   <td><a href="view-appform.php?aticid=<?php echo $row['apid']; ?>" target="_blank">View Details</a></td>
                 </tr>

@@ -1,8 +1,12 @@
 <?php
 session_start();
 
+// connects db
 include('../includes/dbconnection.php');
+// checks for privilege
 include('includes/access.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -21,18 +25,25 @@ if (isset($_POST['submit'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     $fname = $_POST['firstname'];
     $lname = $_POST['lastname'];
 
-    // update data from db
-    $query = mysqli_query($conn, "UPDATE tbluser SET FirstName='$fname', LastName='$lname' WHERE ID='$sid'");
-    if ($query) {
-      echo '<script>alert("User profile has been updated")</script>';
-    } else {
-      echo '<script>alert("Something went wrong. Please try again.")</script>';
+
+    // Prepare the UPDATE statement
+    $stmt = mysqli_prepare($conn, "UPDATE tbluser SET FirstName = ?, LastName = ? WHERE ID = ?");
+
+    if ($stmt) {
+      // Bind the parameters
+      mysqli_stmt_bind_param($stmt, "ssi", $fname, $lname, $sid);
+      if (mysqli_stmt_execute($stmt)) {
+        echo '<script>alert("User profile has been updated")</script>';
+      } else {
+        echo '<script>alert("Something went wrong. Please try again.")</script>';
+      }
+      mysqli_stmt_close($stmt);
     }
   }
 }
@@ -91,7 +102,7 @@ if (isset($_POST['submit'])) {
             <!-- Input Mask start -->
 
             <!-- Formatter start -->
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="submit" method="post" enctype="multipart/form-data" class="php-email-form">
+            <form name="submit" method="post" enctype="multipart/form-data" class="php-email-form">
               <?php
               $sid = $_GET['udid'];
               $ret = mysqli_query($conn, "SELECT * FROM tbluser WHERE ID='$sid'");
@@ -130,7 +141,7 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>First Name </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="firstname" name="firstname" value="<?php echo $row['FirstName']; ?>" type="text" required>
+                                    <input class="form-control white_bg" id="firstname" name="firstname" value="<?php echo $row['FirstName']; ?>" type="text" maxlength="45" required>
                                   </div>
                                 </fieldset>
 
@@ -141,7 +152,7 @@ if (isset($_POST['submit'])) {
                                   <h6>Last Name </h6>
                                   <div class="form-group">
 
-                                    <input class="form-control white_bg" id="lastname" name="lastname" value="<?php echo $row['LastName']; ?>" type="text" required>
+                                    <input class="form-control white_bg" id="lastname" name="lastname" value="<?php echo $row['LastName']; ?>" type="text" maxlength="45" required>
                                   </div>
                                 </fieldset>
                               </div>
@@ -153,23 +164,19 @@ if (isset($_POST['submit'])) {
                                 <fieldset>
                                   <h6>Contact Number </h6>
                                   <div class="form-group">
-                                    <input class="form-control white_bg" id="contactno" name="contactno" value="<?php echo $row['MobileNumber']; ?>" type="text" maxlength='10' required readonly='true'>
+                                    <input class="form-control white_bg" id="contactno" name="contactno" value="<?php echo $row['MobileNumber']; ?>" type="number" maxlength='10' required readonly='true'>
                                   </div>
                                 </fieldset>
-
                               </div>
-
 
                               <div class="col-xl-6 col-lg-12">
                                 <fieldset>
                                   <h6>Email </h6>
                                   <div class="form-group">
-
-                                    <input class="form-control white_bg" id="email" name="email" type="email" value="<?php echo $row['Email']; ?>" required readonly='true'>
+                                    <input class="form-control white_bg" id="email" name="email" type="email" value="<?php echo $row['Email']; ?>" maxlength="40" required readonly='true'>
                                   </div>
                                 </fieldset>
                               </div>
-
 
                             </div>
                           <?php } ?>

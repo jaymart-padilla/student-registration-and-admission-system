@@ -5,6 +5,8 @@ session_start();
 include('../includes/dbconnection.php');
 // check for privilege
 include('includes/access.php');
+// form filter
+include('../includes/error/filter-input.php');
 
 $formError = "";
 
@@ -21,19 +23,27 @@ if (isset($_POST['submit'])) {
     // XXS Protection
     // filters all post data 
     foreach ($_POST as $key => $value) {
-      $_POST[$key] = htmlspecialchars($value);
+      $_POST[$key] = filterInput($conn, $value);
     }
 
     $coursename = $_POST['coursename'];
 
-    // insert data to db
-    $query = mysqli_query($conn, "INSERT INTO tblcourse(CourseName) VALUE('$coursename')");
-    if ($query) {
-      $msg = "Course has been added.";
-      echo '<script>alert("Course has been added.")</script>';
-      echo "<script>window.location.href ='add-course.php'</script>";
-    } else {
-      echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+    // Prepare the SQL statement
+    $stmt = mysqli_prepare(
+      $conn,
+      "INSERT INTO tblcourse(CourseName) VALUE(?)"
+    );
+    if ($stmt) {
+      mysqli_stmt_bind_param($stmt, "s", $coursename);
+
+      if (mysqli_stmt_execute($stmt)) {
+        $msg = "Course has been added.";
+        echo "<script>window.location.href ='manage-course.php'</script>";
+      } else {
+        echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+      }
+
+      mysqli_stmt_close($stmt);
     }
   }
 }
@@ -115,8 +125,7 @@ if (isset($_POST['submit'])) {
                               <fieldset>
                                 <h6>Course Name</h6>
                                 <div class="form-group">
-
-                                  <input class="form-control white_bg" id="coursename" type="text" name="coursename" required>
+                                  <input class="form-control white_bg" id="coursename" type="text" name="coursename" maxlength="90" required>
                                 </div>
                               </fieldset>
                             </div>
