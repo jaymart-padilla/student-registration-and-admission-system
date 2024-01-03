@@ -1,19 +1,19 @@
-<h1>Student Registration System</h1>
+# Student Registration System
 
 ### Super Admin's account:
 
-firstname: user
-lastname: admin
-mobile no: 9519523387
-email: jrpadilla_20ac0174@psu.edu.ph
-password: password123
+- **Firstname:** user
+- **Lastname:** admin
+- **Mobile No:** 9519523387
+- **Email:** jrpadilla_20ac0174@psu.edu.ph
+- **Password:** password123
 
-<hr/>
+---
 
 ### Student's account (sample):
 
-mobile no: 1234567890
-email: jane@gmail.com
-password: password123
+- **Mobile No:** 1234567890
+- **Email:** jane@gmail.com
+- **Password:** password123
 
-***Refer: database/system_data.sql***
+*Refer: database/system_data.sql*
