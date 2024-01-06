@@ -1,4 +1,4 @@
-# Student Registration System
+# Student Registration and Admission System
 
 ## About this project
 This project was developed for my college subject (WS 101). It simulates the complete process of online registration and admission. It provides a comprehensive solution to streamline and manage the student enrollment journey.
